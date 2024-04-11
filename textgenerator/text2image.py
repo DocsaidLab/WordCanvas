@@ -38,10 +38,15 @@ def text2image(
     text_width = right - left
     text_height = bottom - top
 
+    # Make sure the text color and background color are in tuple format
+    # And accept any array-like input
+    text_color = tuple(np.array(text_color).tolist())
+    background_color = tuple(np.array(background_color).tolist())
+
     img = Image.new(
         mode='RGB',
         size=(text_width, text_height),
-        color=tuple(background_color)
+        color=background_color,
     )
 
     d = ImageDraw.Draw(img)
@@ -51,18 +56,18 @@ def text2image(
         text=text,
         font=font,
         direction=direction,
-        fill=tuple(text_color),
+        fill=text_color,
         **kwargs
     )
 
     infos = {
         'text': text,
-        'bbox': (left, top, right, bottom),
-        'wh': (text_width, text_height),
+        'bbox(xyxy)': (left, top, right, bottom),
+        'bbox(wh)': (text_width, text_height),
         'offset': offset,
         'direction': direction,
-        'background_color': tuple(background_color),
-        'text_color': tuple(text_color),
+        'background_color': background_color,
+        'text_color': text_color,
     }
 
     return np.array(img), infos
