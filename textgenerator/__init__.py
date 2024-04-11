@@ -1,3 +1,4 @@
+from .generator import TextGenerator
 from .text2image import text2image
 from .utils import *
 
