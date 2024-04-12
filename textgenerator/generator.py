@@ -143,54 +143,51 @@ class TextGenerator:
 
         table = PrettyTable()
         table.field_names = [
-            "Parameter", "CurrentValue", "Property", "SetMethod", "DType",
-            "Description"
+            "Property", "CurrentValue",  "SetMethod", "DType", "Description"
         ]
         table.align = "l"
 
         data = [
-            ["Font Path", self._font_path.stem, "font_path",
-                "reinit", "str", "Font file path."],
-            ["Font Bank", self.font_bank, "font_bank", "reinit",
-                "str", "Font bank path. Only activated when the Random Font setting is set to True."],
-            ["Random Font", self.colorize(
-                self.random_font), "random_font", "reinit", "bool", "Randomize font. Overwrite `Font Path` settings."],
-            ["Random Text", self.colorize(
-                self.random_text), "random_text", "reinit", "bool", "Randomize text. Overwrite input text."],
-            ["Text Size", self._text_size, "_text_size",
-                "reinit", "int", "Font size."],
-            ["Text Direction", self.direction, "direction",
-                "set", "str", "Text direction. (ltr, ttb)"],
-            ["Text Aspect Ratio", self.text_aspect_ratio,
-                "text_aspect_ratio", "set", "float", "Text aspect ratio. Set to 0.5 for half width, etc."],
-            ["Text Color", self.text_color, "text_color",
-                "set", "Tuple[int, int, int]", "Text color."],
-            ["Background Color", self.background_color, "background_color",
-                "set", "Tuple[int, int, int]", "Background color."],
-            ["Alignment Mode", self.align_mode, "align_mode",
-                "set", "AlignMode", "Text alignment mode."],
-            ["Output Size", self.output_size, "output_size",
-                "set", "Tuple[int, int]", "Output image size."],
-            ["Output Direction", self.output_direction, "output_direction",
-                "set", "OutputDirection", "Output image direction."],
-            ["Aug Function", self.aug_func.__class__.__name__,
-                "aug_func", "set", "Callable", "Augmentation function."],
-            ["Aug Ratio", self.aug_ratio, "aug_ratio",
-                "set", "float", "Augmentation ratio."],
-            ["Random Min Text Length", self.min_random_text_length,
-                "min_random_text_length", "set", "int", "Random minimum text length. Only activated when the `Random Text` setting is set to True."],
-            ["Random Max Text Length", self.max_random_text_length,
-                "max_random_text_length", "set", "int", "Random maximum text length. Only activated when the `Random Text` setting is set to True."],
-            ["Random Direction", self.colorize(
-                self.random_direction), "random_direction", "set", "bool", "Randomize direction. Overwrite text direction."],
-            ["Random Text Color", self.colorize(
-                self.random_text_color), "random_text_color", "set", "bool", "Randomize text color. Overwrite text color."],
-            ["Random Background Color", self.colorize(
-                self.random_background_color), "random_background_color", "set", "bool", "Randomize background color. Overwrite background color."],
-            ["Random Align Mode", self.colorize(
-                self.random_align_mode), "random_align_mode", "set", "bool", "Randomize align mode. Overwrite align mode."],
-            ["Enable All Random", self.colorize(
-                self.enable_all_random), "enable_all_random", "set", "bool", "Enable all random. Overwrite all random settings."],
+            ["font_path", self._font_path.stem,
+                "reinit", "str", "Path of font file."],
+            ["font_bank", self.font_bank, "reinit", "str",
+                "Path of Font bank. Only activated when setting `random_font` to True."],
+            ["random_font", self.colorize(
+                self.random_font), "reinit", "bool", "Randomize font. Overwrite `font_path`."],
+            ["random_text", self.colorize(
+                self.random_text), "reinit", "bool", "Randomize text. Overwrite input text."],
+            ["text_size", self._text_size, "reinit", "int", "Size of font."],
+            ["direction", self.direction, "set",
+                "str", "Text direction. (ltr | ttb)"],
+            ["text_aspect_ratio", self.text_aspect_ratio, "set", "float",
+                "Text aspect ratio. ex: set to 0.5 for half width."],
+            ["text_color", self.text_color, "set",
+                "Tuple[int, int, int]", "Color of text."],
+            ["background_color", self.background_color, "set",
+                "Tuple[int, int, int]", "Color of background."],
+            ["output_size", self.output_size, "set",
+                "Tuple[int, int]", "Fixed size of output image. If None, the output size will be determined by the input text and font size."],
+            ["align_mode", self.align_mode, "set",
+                "AlignMode", "Text alignment mode. (Left | Right | Center | Scatter)"],
+            ["output_direction", self.output_direction, "set",
+                "OutputDirection", "Output image direction. (Remain | Horizontal | Vertical)"],
+            ["aug_func", self.aug_func.__class__.__name__,
+                "set", "Callable", "Augmentation function."],
+            ["aug_ratio", self.aug_ratio, "set", "float", "Augmentation ratio."],
+            ["min_random_text_length", self.min_random_text_length, "set", "int",
+                "Random minimum text length. Only activated when the `random_text` setting is set to True."],
+            ["max_random_text_length", self.max_random_text_length, "set", "int",
+                "Random maximum text length. Only activated when the `random_text` setting is set to True."],
+            ["random_direction", self.colorize(
+                self.random_direction), "set", "bool", "Randomize direction. Overwrite `direction`."],
+            ["random_text_color", self.colorize(
+                self.random_text_color), "set", "bool", "Randomize text color. Overwrite `text_color`."],
+            ["random_background_color", self.colorize(
+                self.random_background_color), "set", "bool", "Randomize background color. Overwrite `background_color`."],
+            ["random_align_mode", self.colorize(
+                self.random_align_mode), "set", "bool", "Randomize align mode. Overwrite `align_mode`."],
+            ["enable_all_random", self.colorize(
+                self.enable_all_random), "set", "bool", "Enable all random. Overwrite all random settings."],
         ]
 
         for row in data:
@@ -437,7 +434,7 @@ if __name__ == '__main__':
                         random_text_color=True, random_background_color=True,
                         aug_ratio=1,
                         output_direction=OutputDirection.Remain)
-
+    breakpoint()
     img, infos = gen('測試輸出')
 
     pprint(infos)
