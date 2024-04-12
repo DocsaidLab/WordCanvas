@@ -79,6 +79,6 @@ def is_character_supported(font: TTFont, character: str, verbose: bool = False) 
 
     if verbose and not character_supported:
         print(
-            f"Character '{character}' ({ord(character):#x}) is not supported by the font.", flush=True)
+            f"Character '{character}' ({ord(character):#x}) is not supported by the font.")
 
     return character_supported

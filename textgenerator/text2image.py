@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Tuple
 
 import numpy as np
@@ -70,4 +71,9 @@ def text2image(
         'text_color': text_color,
     }
 
-    return np.array(img), infos
+    img = np.array(img)
+    if img.shape[0] == 0 or img.shape[1] == 0:
+        raise ValueError(
+            f"Input chars: {text} not supported by the font: {Path(font.path).stem}.")
+
+    return img, infos

@@ -1,6 +1,5 @@
 from enum import IntEnum
 from pathlib import Path
-from pprint import pprint
 from typing import Tuple, Union
 
 import docsaidkit as D
@@ -60,13 +59,14 @@ class TextGenerator:
         random_align_mode: bool = False,
         random_background_color: bool = False,
     ):
-        self.font_path = font_path
+        self._font_path = font_path
+        self._text_size = text_size
+
         self.font = load_truetype_font(font_path, size=text_size)
         self.font_chars_tables = {
             Path(font_path).stem: get_supported_characters(font_path)
         }
 
-        self.text_size = text_size
         self.direction = direction
         self.text_color = text_color
         self.background_color = background_color
@@ -100,6 +100,14 @@ class TextGenerator:
                     font.stem: get_supported_characters(font)
                     for font in D.Tqdm(font_bonk)
                 }
+
+    @property
+    def text_size(self):
+        return self._text_size
+
+    @property
+    def font_path(self):
+        return self._font_path
 
     def __repr__(self):
         return f'{self.__class__.__name__}(\n\t' + ',\n\t'.join([
@@ -191,10 +199,6 @@ class TextGenerator:
             )[0] for t in texts if t != ' '  # Skip space
         ]
 
-        # If there is only one image, return it directly
-        if len(imgs) == 1:
-            return imgs[0]
-
         if direction == 'ltr':
 
             # For `self.text_ascept_ratio` is not 1.0
@@ -205,6 +209,10 @@ class TextGenerator:
                             img.shape[1] // self.text_ascept_ratio))
                     ) for img in imgs
                 ]
+
+            # If there is only one image, return it directly
+            if len(imgs) == 1:
+                return imgs[0]
 
             align_h = max([img.shape[0] for img in imgs])
             imgs = [D.imresize(img, (align_h, None)) for img in imgs]
@@ -234,6 +242,10 @@ class TextGenerator:
                          img.shape[1])
                     ) for img in imgs
                 ]
+
+            # If there is only one image, return it directly
+            if len(imgs) == 1:
+                return imgs[0]
 
             align_w = max([img.shape[1] for img in imgs])
 
@@ -271,7 +283,7 @@ class TextGenerator:
             font_name = font.path.stem
         else:
             font = self.font
-            font_name = Path(self.font_path).stem
+            font_name = Path(self._font_path).stem
 
         if self.random_text:
             candidates = self.font_chars_tables[font_name]
@@ -298,7 +310,7 @@ class TextGenerator:
             if self.random_align_mode else self.align_mode
 
         # Align model setting of `SCATTER` is special case
-        if align_mode == AlignMode.Scatter:
+        if align_mode == AlignMode.Scatter and self.output_size is not None:
             img = self.gen_scatter_image(
                 text, font, direction, text_color, background_color)
             infos = {
@@ -333,15 +345,47 @@ class TextGenerator:
         infos.update({
             'font_name': font_name,
             'align_mode': align_mode,
+            'output_direction': self.output_direction,
         })
-        pprint(infos)
 
-        return img
+        return img, infos
 
 
-if __name__ == '__main__':
-    gen = TextGenerator(output_size=(64, 1024), random_font=False,
-                        align_mode=AlignMode.Scatter, direction='ltr',
-                        output_direction=OutputDirection.Remain)
-    img = gen('測試輸出！ ABCD')
-    D.imwrite(img)
+# if __name__ == '__main__':
+#     gen = TextGenerator(output_size=(64, 512), random_font=False,
+#                         align_mode=AlignMode.Scatter, direction='ttb',
+#                         text_ascept_ratio=1,
+#                         output_direction=OutputDirection.Remain)
+#     img = gen('測試輸出')
+#     D.imwrite(img)
+
+    # Done
+    # 四種對齊方式
+    # 兩種輸出方向
+    # 標準化輸出大小
+    # 隨機字體
+    # 隨機文字
+    # 隨機文字長度
+    # 隨機文字顏色
+    # 隨機背景顏色
+    # 隨機文字方向
+    # 隨機對齊方式
+    # 指定最小文字長度
+    # 指定最大文字長度
+    # 壓扁文字
+
+    # TODO
+    # 影像增強功能
+    # 自然背景合成
+
+    # 数据合成工具
+    # https://github.com/PaddlePaddle/PaddleOCR/blob/main/doc/doc_ch/data_synthesis.md
+    # 除了开源数据，用户还可使用合成工具自行合成。这里整理了常用的数据合成工具，持续更新中，欢迎各位小伙伴贡献工具～
+
+    # text_renderer
+    # SynthText
+    # SynthText_Chinese_version
+    # TextRecognitionDataGenerator
+    # SynthText3D
+    # UnrealText
+    # SynthTIGER
