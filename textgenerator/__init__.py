@@ -1,5 +1,6 @@
-from .generator import AlignMode, OutputDirection, TextGenerator
-from .text2image import text2image
+from .generator import *
+from .imgaug import *
+from .text2image import *
 from .utils import *
 
 __version__ = '0.1.0'

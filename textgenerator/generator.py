@@ -1,13 +1,15 @@
 from enum import IntEnum
+from functools import partial
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Callable, Tuple, Union
 
 import docsaidkit as D
 import numpy as np
 import regex
-
-from .text2image import text2image
-from .utils import get_supported_characters, load_truetype_font
+from imgaug import ExampleAug
+from prettytable import PrettyTable
+from text2image import text2image
+from utils import get_supported_characters, load_truetype_font
 
 DIR = D.get_curdir(__file__)
 
@@ -33,8 +35,11 @@ class OutputDirection(D.EnumCheckMixin, IntEnum):
 
 class TextGenerator:
 
+    # Using `font_bonk` to setting for your own font bank.
     DEFAULT_FONT_BANK = DIR / 'fonts'
-    DEFAULT_FONT_PATH = DIR / 'fonts' / 'NotoSans' / 'NotoSansTC-Regular.otf'
+
+    # Using `font_path` to setting for your own font.
+    DEFAULT_FONT_PATH = DIR / 'fonts' / 'NotoSansTC-Regular.otf'
 
     def __init__(
         self,
@@ -43,10 +48,12 @@ class TextGenerator:
         direction: str = 'ltr',
         text_color: Tuple[int, int, int] = (255, 255, 255),
         background_color: Tuple[int, int, int] = (0, 0, 0),
-        text_ascept_ratio: float = 1.0,
+        text_aspect_ratio: float = 1.0,
         align_mode: str = AlignMode.Default,
         output_size: Tuple[int, int] = None,
         output_direction: str = OutputDirection.Default,
+        aug_func: Callable = None,
+        aug_ratio: float = 0,
         *,
         enable_all_random: bool = False,
         font_bonk: Union[str, Path] = DEFAULT_FONT_BANK,
@@ -61,6 +68,8 @@ class TextGenerator:
     ):
         self._font_path = font_path
         self._text_size = text_size
+        self._font_bank = None
+        self._random_font = random_font or enable_all_random
 
         self.font = load_truetype_font(font_path, size=text_size)
         self.font_chars_tables = {
@@ -70,16 +79,19 @@ class TextGenerator:
         self.direction = direction
         self.text_color = text_color
         self.background_color = background_color
-        self.text_ascept_ratio = text_ascept_ratio
+        self.text_aspect_ratio = text_aspect_ratio
         self.align_mode = AlignMode.obj_to_enum(align_mode)
         self.output_size = output_size
         self.output_direction = OutputDirection.obj_to_enum(output_direction)
         self.min_random_text_length = min_random_text_length
         self.max_random_text_length = max_random_text_length
 
+        self.aug_ratio = aug_ratio
+        self.aug_func = aug_func if aug_func is not None \
+            else ExampleAug(p=aug_ratio)
+
         self.enable_all_random = enable_all_random
         self.random_text = random_text or enable_all_random
-        self.random_font = random_font or enable_all_random
         self.random_align_mode = random_align_mode or enable_all_random
         self.random_direction = random_direction or enable_all_random
         self.random_text_color = random_text_color or enable_all_random
@@ -109,37 +121,96 @@ class TextGenerator:
     def font_path(self):
         return self._font_path
 
+    @property
+    def font_bank(self):
+        return self._font_bank
+
+    @property
+    def random_font(self):
+        return self._random_font
+
     def __repr__(self):
-        return f'{self.__class__.__name__}(\n\t' + ',\n\t'.join([
-            f'font_path={self.font_path.stem!r}',
-            f'text_size={self.text_size!r}',
-            f'direction={self.direction!r}',
-            f'text_color={self.text_color!r}',
-            f'background_color={self.background_color!r}',
-            f'align_mode={self.align_mode!r}',
-            f'output_size={self.output_size!r}',
-            f'output_direction={self.output_direction!r}',
-            f'enable_all_random={self.enable_all_random!r}',
-            f'random_font={self.random_font!r}',
-            f'random_text={self.random_text!r}',
-            f'random_direction={self.random_direction!r}',
-            f'random_text_color={self.random_text_color!r}',
-            f'random_background_color={self.random_background_color!r}',
-            f'random_align_mode={self.random_align_mode!r}',
-            f'min_random_text_length={self.min_random_text_length!r}',
-            f'max_random_text_length={self.max_random_text_length!r}',
-        ]) + '\n)'
+        return self.dashboard
+
+    @staticmethod
+    def colorize(value):
+        def select_color(value):
+            return D.COLORSTR.GREEN if value else D.COLORSTR.RED
+        return D.colorstr(value, select_color(value))
+
+    @property
+    def dashboard(self):
+
+        table = PrettyTable()
+        table.field_names = [
+            "Parameter", "CurrentValue", "Property", "SetMethod", "DType",
+            "Description"
+        ]
+        table.align = "l"
+
+        data = [
+            ["Font Path", self._font_path.stem, "font_path",
+                "reinit", "str", "Font file path."],
+            ["Font Bank", self.font_bank, "font_bank", "reinit",
+                "str", "Font bank path. Only activated when the Random Font setting is set to True."],
+            ["Random Font", self.colorize(
+                self.random_font), "random_font", "reinit", "bool", "Randomize font. Overwrite `Font Path` settings."],
+            ["Random Text", self.colorize(
+                self.random_text), "random_text", "reinit", "bool", "Randomize text. Overwrite input text."],
+            ["Text Size", self._text_size, "_text_size",
+                "reinit", "int", "Font size."],
+            ["Text Direction", self.direction, "direction",
+                "set", "str", "Text direction. (ltr, ttb)"],
+            ["Text Aspect Ratio", self.text_aspect_ratio,
+                "text_aspect_ratio", "set", "float", "Text aspect ratio. Set to 0.5 for half width, etc."],
+            ["Text Color", self.text_color, "text_color",
+                "set", "Tuple[int, int, int]", "Text color."],
+            ["Background Color", self.background_color, "background_color",
+                "set", "Tuple[int, int, int]", "Background color."],
+            ["Alignment Mode", self.align_mode, "align_mode",
+                "set", "AlignMode", "Text alignment mode."],
+            ["Output Size", self.output_size, "output_size",
+                "set", "Tuple[int, int]", "Output image size."],
+            ["Output Direction", self.output_direction, "output_direction",
+                "set", "OutputDirection", "Output image direction."],
+            ["Aug Function", self.aug_func.__class__.__name__,
+                "aug_func", "set", "Callable", "Augmentation function."],
+            ["Aug Ratio", self.aug_ratio, "aug_ratio",
+                "set", "float", "Augmentation ratio."],
+            ["Random Min Text Length", self.min_random_text_length,
+                "min_random_text_length", "set", "int", "Random minimum text length. Only activated when the `Random Text` setting is set to True."],
+            ["Random Max Text Length", self.max_random_text_length,
+                "max_random_text_length", "set", "int", "Random maximum text length. Only activated when the `Random Text` setting is set to True."],
+            ["Random Direction", self.colorize(
+                self.random_direction), "random_direction", "set", "bool", "Randomize direction. Overwrite text direction."],
+            ["Random Text Color", self.colorize(
+                self.random_text_color), "random_text_color", "set", "bool", "Randomize text color. Overwrite text color."],
+            ["Random Background Color", self.colorize(
+                self.random_background_color), "random_background_color", "set", "bool", "Randomize background color. Overwrite background color."],
+            ["Random Align Mode", self.colorize(
+                self.random_align_mode), "random_align_mode", "set", "bool", "Randomize align mode. Overwrite align mode."],
+            ["Enable All Random", self.colorize(
+                self.enable_all_random), "enable_all_random", "set", "bool", "Enable all random. Overwrite all random settings."],
+        ]
+
+        for row in data:
+            table.add_row(row)
+
+        # print(table)
+        return table.get_string()
 
     def regularize_image(self, img, direction, background_color) -> np.ndarray:
         h, w = self.output_size
         if direction == 'ltr':
-            img = D.imresize(
-                img,
-                (img.shape[0], int(img.shape[1] // self.text_ascept_ratio))
-            )
+            if self.text_aspect_ratio != 1.0:
+                img = D.imresize(
+                    img,
+                    (img.shape[0], int(img.shape[1] // self.text_aspect_ratio))
+                )
+
             img = D.imresize(img, (h, None))
             img_w = img.shape[1]
-            if img_w > w:
+            if img_w >= w:
                 img = D.imresize(img, (h, w))
             else:
                 # Align mode will affect the padding position
@@ -154,15 +225,16 @@ class TextGenerator:
         elif direction == 'ttb':
             h, w = w, h
 
-            if self.align_mode != AlignMode.Scatter:
+            if self.align_mode != AlignMode.Scatter and \
+                    self.text_aspect_ratio != 1.0:
                 img = D.imresize(
                     img,
-                    (img.shape[0], int(img.shape[1] // self.text_ascept_ratio))
+                    (img.shape[0], int(img.shape[1] // self.text_aspect_ratio))
                 )
 
             img = D.imresize(img, (None, w))
             img_h = img.shape[0]
-            if img_h > h:
+            if img_h >= h:
                 img = D.imresize(img, (h, w))
             else:
                 # Align mode will affect the padding position
@@ -174,6 +246,7 @@ class TextGenerator:
                     # Accepted align mode: Center, Scatter
                     pad_size = ((h - img_h) // 2, (h - img_h) // 2, 0, 0)
                 img = D.pad(img, pad_size, fill_value=background_color)
+        img = D.imresize(img, (h, w))
         return img
 
     def gen_scatter_image(self, text, font, direction, text_color, background_color) -> np.ndarray:
@@ -201,12 +274,12 @@ class TextGenerator:
 
         if direction == 'ltr':
 
-            # For `self.text_ascept_ratio` is not 1.0
-            if self.text_ascept_ratio != 1.0:
+            # For `self.text_aspect_ratio` is not 1.0
+            if self.text_aspect_ratio != 1.0:
                 imgs = [
                     D.imresize(
                         img, (img.shape[0], int(
-                            img.shape[1] // self.text_ascept_ratio))
+                            img.shape[1] // self.text_aspect_ratio))
                     ) for img in imgs
                 ]
 
@@ -233,12 +306,12 @@ class TextGenerator:
 
         elif direction == 'ttb':
 
-            # For `self.text_ascept_ratio` is not 1.0
-            if self.text_ascept_ratio != 1.0:
+            # For `self.text_aspect_ratio` is not 1.0
+            if self.text_aspect_ratio != 1.0:
                 imgs = [
                     D.imresize(
                         img,
-                        (int(img.shape[0] * self.text_ascept_ratio),
+                        (int(img.shape[0] * self.text_aspect_ratio),
                          img.shape[1])
                     ) for img in imgs
                 ]
@@ -273,7 +346,7 @@ class TextGenerator:
 
             img = np.concatenate(imgs_add_interval, axis=0)
 
-        return img
+        return img.astype(np.uint8)
 
     def __call__(self, text: str) -> np.ndarray:
 
@@ -316,8 +389,8 @@ class TextGenerator:
             infos = {
                 'text': text,
                 'direction': direction,
-                'background_color': background_color,
-                'text_color': text_color,
+                'background_color': tuple(background_color.tolist()),
+                'text_color': tuple(text_color.tolist()),
             }
         else:
             img, infos = text2image(
@@ -348,44 +421,24 @@ class TextGenerator:
             'output_direction': self.output_direction,
         })
 
+        if np.random.rand() < self.aug_ratio:
+            img = self.aug_func(img, infos['background_color'])
+
         return img, infos
 
 
-# if __name__ == '__main__':
-#     gen = TextGenerator(output_size=(64, 512), random_font=False,
-#                         align_mode=AlignMode.Scatter, direction='ttb',
-#                         text_ascept_ratio=1,
-#                         output_direction=OutputDirection.Remain)
-#     img = gen('測試輸出')
-#     D.imwrite(img)
+if __name__ == '__main__':
 
-    # Done
-    # 四種對齊方式
-    # 兩種輸出方向
-    # 標準化輸出大小
-    # 隨機字體
-    # 隨機文字
-    # 隨機文字長度
-    # 隨機文字顏色
-    # 隨機背景顏色
-    # 隨機文字方向
-    # 隨機對齊方式
-    # 指定最小文字長度
-    # 指定最大文字長度
-    # 壓扁文字
+    from pprint import pprint
 
-    # TODO
-    # 影像增強功能
-    # 自然背景合成
+    gen = TextGenerator(output_size=(64, 512), random_font=False,
+                        align_mode=AlignMode.Scatter, direction='ltr',
+                        text_aspect_ratio=1, random_text=True,
+                        random_text_color=True, random_background_color=True,
+                        aug_ratio=1,
+                        output_direction=OutputDirection.Remain)
 
-    # 数据合成工具
-    # https://github.com/PaddlePaddle/PaddleOCR/blob/main/doc/doc_ch/data_synthesis.md
-    # 除了开源数据，用户还可使用合成工具自行合成。这里整理了常用的数据合成工具，持续更新中，欢迎各位小伙伴贡献工具～
+    img, infos = gen('測試輸出')
 
-    # text_renderer
-    # SynthText
-    # SynthText_Chinese_version
-    # TextRecognitionDataGenerator
-    # SynthText3D
-    # UnrealText
-    # SynthTIGER
+    pprint(infos)
+    D.imwrite(img)
