@@ -4,15 +4,14 @@ import pytest
 from docsaidkit import get_curdir
 from fontTools.ttLib import TTFont
 from PIL import ImageFont
-from textgenerator.utils import *
-from textgenerator.utils import (get_supported_characters,
-                                 is_character_supported, load_truetype_font,
-                                 load_ttfont)
+from wordcanvas.utils import *
+from wordcanvas.utils import (get_supported_characters, is_character_supported,
+                              load_truetype_font, load_ttfont)
 
 DIR = get_curdir(__file__)
 
 # Path to the test font
-TEST_FONT_PATH = DIR.parent / "textgenerator" / "fonts" / "OcrB-Regular.ttf"
+TEST_FONT_PATH = DIR.parent / "wordcanvas" / "fonts" / "NotoSansTC-Regular.otf"
 
 
 @pytest.fixture
@@ -42,7 +41,7 @@ def test_get_supported_characters(ttfont):
     KNOWN_CHARACTER = 'A'  # Adjust this based on your test font
 
     # A character known not to be supported by the test font
-    UNKNOWN_CHARACTER = '試'  # A non-character in Unicode, unlikely to be supported
+    UNKNOWN_CHARACTER = '㐀'  # A non-character in Unicode, unlikely to be supported
 
     for status in [True, False]:
 
@@ -57,7 +56,7 @@ def test_get_supported_characters(ttfont):
             f"Known character '{KNOWN_CHARACTER}' should be supported by the font"
         assert UNKNOWN_CHARACTER not in supported_chars, \
             f"Unknown character '{UNKNOWN_CHARACTER}' should not be supported by the font"
-        assert len(supported_chars) == 208, \
+        assert len(supported_chars) == 20632, \
             "Should return a non-empty list"
 
         if status:
@@ -74,7 +73,7 @@ def test_is_character_supported(ttfont):
     KNOWN_CHARACTER = 'A'  # Adjust this based on your test font
 
     # A character known not to be supported by the test font
-    UNKNOWN_CHARACTER = '試'  # A non-character in Unicode, unlikely to be supported
+    UNKNOWN_CHARACTER = '㐀'  # A non-character in Unicode, unlikely to be supported
 
     assert is_character_supported(
         ttfont, KNOWN_CHARACTER), f"Font should support character '{KNOWN_CHARACTER}'"

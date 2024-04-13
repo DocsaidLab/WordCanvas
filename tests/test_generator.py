@@ -1,17 +1,17 @@
 import numpy as np
 import pytest
-from textgenerator import AlignMode, OutputDirection, TextGenerator
+from wordcanvas import AlignMode, OutputDirection, WordCanvas
 
 
-class TestTextGenerator:
+class TestWordCanvas:
 
     @pytest.fixture
     def generator(self):
-        return TextGenerator(output_size=(64, 512), text_ascept_ratio=1.0, random_font=False, enable_all_random=False)
+        return WordCanvas(output_size=(64, 512), text_aspect_ratio=1.0, random_font=False, enable_all_random=False)
 
     def test_init_with_custom_parameters(self, generator):
         assert generator.output_size == (64, 512)
-        assert generator.text_ascept_ratio == 1.0
+        assert generator.text_aspect_ratio == 1.0
         assert generator.random_font is False
         assert generator.enable_all_random is False
 
@@ -38,17 +38,27 @@ class TestTextGenerator:
 
     def test_error_handling(self):
         with pytest.raises(OSError):
-            TextGenerator(font_path="invalid/path/to/font.ttf")
+            WordCanvas(font_path="invalid/path/to/font.ttf")
 
-    def test_repr(self, generator):
-        assert "TextGenerator(\n\tfont_path" in repr(generator)
+    def test_dashboard(self, generator):
+        text = generator.dashboard
+        expected_properties = [
+            "font_path", "font_bank", "random_font", "random_text",
+            "text_size", "direction", "text_aspect_ratio", "text_color",
+            "background_color", "output_size", "align_mode", "output_direction",
+            "aug_func", "aug_ratio", "min_random_text_length", "max_random_text_length",
+            "random_direction", "random_text_color", "random_background_color",
+            "random_align_mode", "enable_all_random"
+        ]
+        for prop in expected_properties:
+            assert prop in text
 
 
-class TestTextGeneratorExtended:
+class TestWordCanvasExtended:
 
     @pytest.fixture
     def generator(self):
-        return TextGenerator(enable_all_random=False, random_text=False, random_font=False)
+        return WordCanvas(enable_all_random=False, random_text=False, random_font=False)
 
     @pytest.mark.parametrize("text_color,background_color", [((255, 0, 0), (0, 0, 0)), ((0, 255, 0), (255, 255, 255))])
     def test_colors(self, generator, text_color, background_color):
@@ -83,11 +93,11 @@ class TestTextGeneratorExtended:
 
     def test_invalid_font_path_handling(self):
         with pytest.raises(Exception) as e_info:
-            TextGenerator(font_path="nonexistent/font/path.ttf")
+            WordCanvas(font_path="nonexistent/font/path.ttf")
 
     def test_invalid_text_size_handling(self):
         with pytest.raises(ValueError) as e_info:
-            TextGenerator(text_size=-1)
+            WordCanvas(text_size=-1)
 
     @pytest.mark.parametrize("align_mode", [AlignMode.Left, AlignMode.Center, AlignMode.Right])
     def test_align_mode_application(self, generator, align_mode):
@@ -96,11 +106,11 @@ class TestTextGeneratorExtended:
         img, infos = generator('test')
 
 
-class TestTextGeneratorRandomFont:
+class TestWordCanvasRandomFont:
 
     @pytest.fixture
     def generator(self):
-        return TextGenerator(random_font=True, random_text=True)
+        return WordCanvas(random_font=True, random_text=True)
 
     def test_random_font_generation(self, generator):
         img, infos = generator("test")
@@ -110,11 +120,21 @@ class TestTextGeneratorRandomFont:
         assert generator.font_path == generator.DEFAULT_FONT_PATH
 
 
-class TestTextGeneratorDirection:
+class TestWordCanvasImgAug:
 
     @pytest.fixture
     def generator(self):
-        return TextGenerator(direction='ttb', output_size=(64, 512))
+        return WordCanvas(aug_ratio=1)
+
+    def test_generation(self, generator):
+        img, infos = generator("test")
+
+
+class TestWordCanvasDirection:
+
+    @pytest.fixture
+    def generator(self):
+        return WordCanvas(direction='ttb', output_size=(64, 512))
 
     def test_ttb_direction(self, generator):
         generator.align_mode = AlignMode.Center
@@ -136,7 +156,7 @@ class TestTextGeneratorDirection:
         generator.align_mode = AlignMode.Scatter
 
         generator.direction = 'ltr'
-        generator.text_ascept_ratio = 1.0
+        generator.text_aspect_ratio = 1.0
 
         img, infos = generator("t")
         assert infos['text'] == 't'
@@ -146,13 +166,13 @@ class TestTextGeneratorDirection:
         assert infos['text'] == '測試'
         assert infos['align_mode'] == AlignMode.Scatter
 
-        generator.text_ascept_ratio = 0.5
+        generator.text_aspect_ratio = 0.5
         img, infos = generator("測試")
         assert infos['text'] == '測試'
         assert infos['align_mode'] == AlignMode.Scatter
 
         generator.direction = 'ttb'
-        generator.text_ascept_ratio = 1.0
+        generator.text_aspect_ratio = 1.0
 
         img, infos = generator("t")
         assert infos['text'] == 't'
@@ -162,14 +182,14 @@ class TestTextGeneratorDirection:
         assert infos['text'] == '測試'
         assert infos['align_mode'] == AlignMode.Scatter
 
-        generator.text_ascept_ratio = 0.5
+        generator.text_aspect_ratio = 0.5
         img, infos = generator("測試")
         assert infos['text'] == '測試'
         assert infos['align_mode'] == AlignMode.Scatter
 
         generator.direction = 'ttb'
         generator.output_direction = OutputDirection.Horizontal
-        generator.text_ascept_ratio = 1.0
+        generator.text_aspect_ratio = 1.0
 
         img, infos = generator("測試")
         assert infos['text'] == '測試'

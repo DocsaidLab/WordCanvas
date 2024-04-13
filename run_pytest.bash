@@ -7,7 +7,7 @@ mkdir -p tests/coverage
 python -m pip install pytest coverage pytest-cov
 
 # 執行 pytest 進行測試，並使用 pytest-cov 插件生成覆蓋率報告
-python -m pytest -x --cov=textgenerator tests
+python -m pytest -x --cov=wordcanvas tests
 
 # 生成詳細的覆蓋率報告，並將報告輸出到指定文件中
 coverage report -m | tee tests/coverage/cov.txt
