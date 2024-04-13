@@ -250,7 +250,7 @@ class WordCanvas:
 
         def split_text(text: str):
             """ Split text into a list of characters. """
-            pattern = r"[a-zA-Z0-9<]+|."
+            pattern = r"[a-zA-Z0-9<\p{P}\u3000-\u303F\uFF00-\uFFEF]+|."
             matches = regex.findall(pattern, text)
             # If the text is a single character, split it into a list
             if len(matches) == 1:
