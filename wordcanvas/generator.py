@@ -196,7 +196,7 @@ class WordCanvas:
         # print(table)
         return table.get_string()
 
-    def regularize_image(self, img, direction, background_color) -> np.ndarray:
+    def regularize_image(self, img, direction, align_mode, background_color) -> np.ndarray:
         h, w = self.output_size
         if direction == 'ltr':
             if self.text_aspect_ratio != 1.0:
@@ -211,9 +211,9 @@ class WordCanvas:
                 img = D.imresize(img, (h, w))
             else:
                 # Align mode will affect the padding position
-                if self.align_mode == AlignMode.Left:
+                if align_mode == AlignMode.Left:
                     pad_size = (0, 0, 0, w - img_w)
-                elif self.align_mode == AlignMode.Right:
+                elif align_mode == AlignMode.Right:
                     pad_size = (0, 0, w - img_w, 0)
                 else:
                     # Accepted align mode: Center, Scatter
@@ -222,7 +222,7 @@ class WordCanvas:
         elif direction == 'ttb':
             h, w = w, h
 
-            if self.align_mode != AlignMode.Scatter and \
+            if align_mode != AlignMode.Scatter and \
                     self.text_aspect_ratio != 1.0:
                 img = D.imresize(
                     img,
@@ -235,9 +235,9 @@ class WordCanvas:
                 img = D.imresize(img, (h, w))
             else:
                 # Align mode will affect the padding position
-                if self.align_mode == AlignMode.Left:
+                if align_mode == AlignMode.Left:
                     pad_size = (0, h - img_h, 0, 0)
-                elif self.align_mode == AlignMode.Right:
+                elif align_mode == AlignMode.Right:
                     pad_size = (h - img_h, 0, 0, 0)
                 else:
                     # Accepted align mode: Center, Scatter
@@ -345,7 +345,11 @@ class WordCanvas:
 
         return img.astype(np.uint8)
 
-    def __call__(self, text: str) -> np.ndarray:
+    def __call__(self, text: str = None) -> np.ndarray:
+
+        if text is None and not self.random_text:
+            raise ValueError(
+                "Please provide a text or set `random_text` to True.")
 
         if self.random_font:
             # Load a random font from the bank
@@ -402,6 +406,7 @@ class WordCanvas:
             img = self.regularize_image(
                 img,
                 direction=direction,
+                align_mode=align_mode,
                 background_color=infos['background_color']
             )
 
@@ -414,7 +419,7 @@ class WordCanvas:
 
         infos.update({
             'font_name': font_name,
-            'align_mode': align_mode,
+            'align_mode': AlignMode.obj_to_enum(align_mode),
             'output_direction': self.output_direction,
         })
 
