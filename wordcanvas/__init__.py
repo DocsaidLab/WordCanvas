@@ -1,4 +1,5 @@
 from .generator import *
+from .imgaug import *
 from .text2image import *
 from .utils import *
 
