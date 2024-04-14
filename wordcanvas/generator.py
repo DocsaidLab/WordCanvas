@@ -1,13 +1,13 @@
+import random
 from enum import IntEnum
 from pathlib import Path
-from typing import Callable, Tuple, Union
+from typing import Tuple, Union
 
 import docsaidkit as D
 import numpy as np
 import regex
 from prettytable import PrettyTable
 
-from .imgaug import ExampleAug
 from .text2image import text2image
 from .utils import get_supported_characters, load_truetype_font
 
@@ -52,8 +52,6 @@ class WordCanvas:
         align_mode: str = AlignMode.Default,
         output_size: Tuple[int, int] = None,
         output_direction: str = OutputDirection.Default,
-        aug_func: Callable = None,
-        aug_ratio: float = 0,
         *,
         enable_all_random: bool = False,
         font_bank: Union[str, Path] = DEFAULT_FONT_BANK,
@@ -69,7 +67,7 @@ class WordCanvas:
         self._font_path = font_path
         self._text_size = text_size
         self._font_bank = None
-        self._random_font = random_font or enable_all_random
+        self._random_font = random_font
 
         self.font = load_truetype_font(font_path, size=text_size)
         self.font_chars_tables = {
@@ -86,10 +84,7 @@ class WordCanvas:
         self.min_random_text_length = min_random_text_length
         self.max_random_text_length = max_random_text_length
 
-        self.aug_ratio = aug_ratio
-        self.aug_func = aug_func if aug_func is not None \
-            else ExampleAug(p=aug_ratio)
-
+        # Random settings
         self.enable_all_random = enable_all_random
         self.random_text = random_text or enable_all_random
         self.random_align_mode = random_align_mode or enable_all_random
@@ -97,7 +92,7 @@ class WordCanvas:
         self.random_text_color = random_text_color or enable_all_random
         self.random_background_color = random_background_color or enable_all_random
 
-        if random_font or enable_all_random:
+        if random_font:
             print('Loading all fonts from bank...')
             font_bank = D.get_files(font_bank, suffix=['.ttf', '.otf'])
             self._font_bank = [
@@ -171,9 +166,6 @@ class WordCanvas:
                 "AlignMode", "Text alignment mode. (Left | Right | Center | Scatter)"],
             ["output_direction", self.output_direction, "set",
                 "OutputDirection", "Output image direction. (Remain | Horizontal | Vertical)"],
-            ["aug_func", self.aug_func.__class__.__name__,
-                "set", "Callable", "Augmentation function."],
-            ["aug_ratio", self.aug_ratio, "set", "float", "Augmentation ratio."],
             ["min_random_text_length", self.min_random_text_length, "set", "int",
                 "Random minimum text length. Only activated when the `random_text` setting is set to True."],
             ["max_random_text_length", self.max_random_text_length, "set", "int",
@@ -380,7 +372,7 @@ class WordCanvas:
             if self.random_direction else self.direction
 
         # Randomize align mode
-        align_mode = np.random.choice(list(AlignMode)) \
+        align_mode = random.choice(list(AlignMode)) \
             if self.random_align_mode else self.align_mode
 
         # Align model setting of `SCATTER` is special case
@@ -419,12 +411,9 @@ class WordCanvas:
 
         infos.update({
             'font_name': font_name,
-            'align_mode': AlignMode.obj_to_enum(align_mode),
+            'align_mode': align_mode,
             'output_direction': self.output_direction,
         })
-
-        if np.random.rand() < self.aug_ratio:
-            img = self.aug_func(img, infos['background_color'])
 
         return img, infos
 

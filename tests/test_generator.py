@@ -46,7 +46,7 @@ class TestWordCanvas:
             "font_path", "font_bank", "random_font", "random_text",
             "text_size", "direction", "text_aspect_ratio", "text_color",
             "background_color", "output_size", "align_mode", "output_direction",
-            "aug_func", "aug_ratio", "min_random_text_length", "max_random_text_length",
+            "min_random_text_length", "max_random_text_length",
             "random_direction", "random_text_color", "random_background_color",
             "random_align_mode", "enable_all_random"
         ]
@@ -118,16 +118,6 @@ class TestWordCanvasRandomFont:
     def test_properties(self, generator):
         assert generator.text_size is 64
         assert generator.font_path == generator.DEFAULT_FONT_PATH
-
-
-class TestWordCanvasImgAug:
-
-    @pytest.fixture
-    def generator(self):
-        return WordCanvas(aug_ratio=1)
-
-    def test_generation(self, generator):
-        img, infos = generator("test")
 
 
 class TestWordCanvasDirection:
