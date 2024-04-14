@@ -35,7 +35,7 @@ class OutputDirection(D.EnumCheckMixin, IntEnum):
 
 class WordCanvas:
 
-    # Using `font_bonk` to setting for your own font bank.
+    # Using `font_bank` to setting for your own font bank.
     DEFAULT_FONT_BANK = DIR / 'fonts'
 
     # Using `font_path` to setting for your own font.
@@ -56,7 +56,7 @@ class WordCanvas:
         aug_ratio: float = 0,
         *,
         enable_all_random: bool = False,
-        font_bonk: Union[str, Path] = DEFAULT_FONT_BANK,
+        font_bank: Union[str, Path] = DEFAULT_FONT_BANK,
         random_font: bool = False,
         random_text: bool = False,
         min_random_text_length: int = 1,
@@ -99,10 +99,10 @@ class WordCanvas:
 
         if random_font or enable_all_random:
             print('Loading all fonts from bank...')
-            font_bonk = D.get_files(font_bonk, suffix=['.ttf', '.otf'])
+            font_bank = D.get_files(font_bank, suffix=['.ttf', '.otf'])
             self._font_bank = [
                 load_truetype_font(font, size=text_size)
-                for font in D.Tqdm(font_bonk)
+                for font in D.Tqdm(font_bank)
             ]
 
             if random_text:
@@ -110,7 +110,7 @@ class WordCanvas:
                 print('Building character tables...')
                 self.font_chars_tables = {
                     font.stem: get_supported_characters(font)
-                    for font in D.Tqdm(font_bonk)
+                    for font in D.Tqdm(font_bank)
                 }
 
     @property
