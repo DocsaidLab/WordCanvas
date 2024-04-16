@@ -67,6 +67,7 @@ class WordCanvas:
         self._font_path = font_path
         self._text_size = text_size
         self._font_bank = None
+        self._font_bank_dir = None
         self._random_font = random_font
 
         self.font = load_truetype_font(font_path, size=text_size)
@@ -94,10 +95,11 @@ class WordCanvas:
 
         if random_font:
             print('Loading all fonts from bank...')
-            font_bank = D.get_files(font_bank, suffix=['.ttf', '.otf'])
+            font_bank_fs = D.get_files(font_bank, suffix=['.ttf', '.otf'])
+            self._font_bank_dir = font_bank
             self._font_bank = [
                 load_truetype_font(font, size=text_size)
-                for font in D.Tqdm(font_bank)
+                for font in D.Tqdm(font_bank_fs)
             ]
 
             if random_text:
@@ -105,7 +107,7 @@ class WordCanvas:
                 print('Building character tables...')
                 self.font_chars_tables = {
                     font.stem: get_supported_characters(font)
-                    for font in D.Tqdm(font_bank)
+                    for font in D.Tqdm(font_bank_fs)
                 }
 
     @property
@@ -118,7 +120,7 @@ class WordCanvas:
 
     @property
     def font_bank(self):
-        return self._font_bank
+        return self._font_bank_dir
 
     @property
     def random_font(self):
@@ -345,7 +347,7 @@ class WordCanvas:
 
         if self.random_font:
             # Load a random font from the bank
-            font = np.random.choice(self.font_bank)
+            font = np.random.choice(self._font_bank)
             font_name = font.path.stem
         else:
             font = self.font
