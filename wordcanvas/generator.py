@@ -257,12 +257,17 @@ class WordCanvas:
 
         def split_text(text: str):
             """ Split text into a list of characters. """
-            pattern = r"[a-zA-Z0-9<\p{P}\u3000-\u303F\uFF00-\uFFEF]+|."
+            pattern = r"[a-zA-Z0-9\p{P}\p{S}]+|."
             matches = regex.findall(pattern, text)
-            # If the text is a single character, split it into a list
+            matches = [m for m in matches if not regex.match(r'\p{Z}', m)]
             if len(matches) == 1:
                 matches = list(text)
             return matches
+
+        left, top, right, bottom = font.getbbox(text, direction=direction)
+        width = max(right - left, 1)
+        height = max(bottom - top, 1)
+        _, offset = font.getmask2(text, direction=direction)
 
         texts = split_text(text)
 
@@ -273,7 +278,10 @@ class WordCanvas:
                 direction=direction,
                 text_color=text_color,
                 background_color=background_color,
-            )[0] for t in texts if t != ' '  # Skip space
+                height=height if direction == 'ltr' else None,
+                width=width if direction == 'ttb' else None,
+                offset=offset,
+            )[0] for t in texts
         ]
 
         if direction == 'ltr':
@@ -445,7 +453,6 @@ class WordCanvas:
 #                      align_mode=AlignMode.Scatter, direction='ltr',
 #                      text_aspect_ratio=1, random_text=True,
 #                      random_text_color=True, random_background_color=True,
-#                      aug_ratio=1,
 #                      output_direction=OutputDirection.Remain)
 #     breakpoint()
 #     img, infos = gen('測試輸出')

@@ -13,6 +13,9 @@ def text2image(
     text_color: Tuple[int, int, int] = (255, 255, 255),
     background_color: Tuple[int, int, int] = (0, 0, 0),
     direction: str = 'ltr',
+    width: int = None,
+    height: int = None,
+    offset: Tuple[int, int] = None,
     **kwargs
 ) -> np.ndarray:
     """
@@ -37,9 +40,11 @@ def text2image(
     """
 
     left, top, right, bottom = font.getbbox(text, direction=direction)
-    _, offset = font.getmask2(text, direction=direction)
-    text_width = right - left
-    text_height = bottom - top
+    _, _offset = font.getmask2(text, direction=direction)
+
+    text_width = max(right - left, 1) if width is None else width
+    text_height = max(bottom - top, 1) if height is None else height
+    offset = _offset if offset is None else offset
 
     # Make sure the text color and background color are in tuple format
     # And accept any array-like input
