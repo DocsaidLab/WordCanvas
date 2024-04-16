@@ -71,6 +71,9 @@ class WordCanvas:
         self._random_font = random_font
 
         self.font = load_truetype_font(font_path, size=text_size)
+        _chars = get_supported_characters(font_path)
+        _chars = sorted(_chars, key=ord)
+        self.chars_table = {char: i for i, char in enumerate(_chars)}
         self.font_chars_tables = {
             Path(font_path).stem: get_supported_characters(font_path)
         }
@@ -106,10 +109,18 @@ class WordCanvas:
             if random_text:
                 # Overwrite font_chars_tables settings
                 print('Building character tables...')
-                self.font_chars_tables = {
-                    font.stem: get_supported_characters(font)
-                    for font in D.Tqdm(font_bank_fs)
+                unique_chars = set()
+                font_chars_tables = {}
+                for font in D.Tqdm(font_bank_fs):
+                    _chars = get_supported_characters(font)
+                    font_chars_tables[font.stem] = _chars
+                    unique_chars.update(_chars)
+
+                unique_chars = sorted(unique_chars, key=ord)
+                self.chars_table = {
+                    char: i for i, char in enumerate(unique_chars)
                 }
+                self.font_chars_tables = font_chars_tables
 
     @property
     def text_size(self):
