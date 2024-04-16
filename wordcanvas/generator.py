@@ -1,4 +1,5 @@
 import random
+import re
 from enum import IntEnum
 from pathlib import Path
 from typing import Tuple, Union
@@ -369,11 +370,13 @@ class WordCanvas:
 
         if self.random_text:
             candidates = self.font_chars_tables[font_name]
-
-            # Randomize text length
-            text_length = np.random.randint(
-                self.min_random_text_length, self.max_random_text_length + 1)
-            text = ''.join(np.random.choice(candidates, text_length))
+            while True:
+                # Randomize text length
+                text_length = np.random.randint(
+                    self.min_random_text_length, self.max_random_text_length + 1)
+                text = ''.join(np.random.choice(candidates, text_length))
+                if re.sub(r'[\s\u3000]+', '', text) != '':
+                    break
 
         # Overwrite text color with random color
         text_color = np.random.randint(0, 255, 3) \
