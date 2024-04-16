@@ -378,13 +378,10 @@ class WordCanvas:
 
         if self.random_text:
             candidates = self.font_chars_tables[font_name]
-            while True:
-                # Randomize text length
-                text_length = np.random.randint(
-                    self.min_random_text_length, self.max_random_text_length + 1)
-                text = ''.join(np.random.choice(candidates, text_length))
-                if re.sub(r'[\s\u3000]+', '', text) != '':
-                    break
+            # Randomize text length
+            text_length = np.random.randint(
+                self.min_random_text_length, self.max_random_text_length + 1)
+            text = ''.join(np.random.choice(candidates, text_length))
 
         # Overwrite text color with random color
         text_color = np.random.randint(0, 255, 3) \
@@ -453,9 +450,11 @@ class WordCanvas:
 #                      align_mode=AlignMode.Scatter, direction='ltr',
 #                      text_aspect_ratio=1, random_text=True,
 #                      random_text_color=True, random_background_color=True,
+#                      random_align_mode=True,
 #                      output_direction=OutputDirection.Remain)
-#     breakpoint()
-#     img, infos = gen('測試輸出')
+
+#     for _ in D.Tqdm(range(100000)):
+#         img, infos = gen('測試輸出')
 
 #     pprint(infos)
 #     D.imwrite(img)
