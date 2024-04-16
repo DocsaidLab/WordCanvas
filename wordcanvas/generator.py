@@ -331,6 +331,8 @@ class WordCanvas:
                 pad_r = max(pad_r, 0)
                 pad_l = align_w - pad_r - img.shape[1]
                 pad_l = max(pad_l, 0)
+
+                background_color = tuple(np.array(background_color).tolist())
                 img = D.pad(img, (0, 0, pad_l, pad_r), background_color)
                 pad_imgs.append(img)
 
