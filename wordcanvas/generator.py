@@ -86,8 +86,9 @@ class WordCanvas:
         self.max_random_text_length = max_random_text_length
 
         # Random settings
+        self.random_text = random_text  # Not affected by `enable_all_random`
+
         self.enable_all_random = enable_all_random
-        self.random_text = random_text or enable_all_random
         self.random_align_mode = random_align_mode or enable_all_random
         self.random_direction = random_direction or enable_all_random
         self.random_text_color = random_text_color or enable_all_random
