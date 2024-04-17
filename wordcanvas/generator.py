@@ -271,18 +271,22 @@ class WordCanvas:
 
         texts = split_text(text)
 
-        imgs = [
-            text2image(
-                text=t,
-                font=font,
-                direction=direction,
-                text_color=text_color,
-                background_color=background_color,
-                height=height if direction == 'ltr' else None,
-                width=width if direction == 'ttb' else None,
-                offset=offset,
-            )[0] for t in texts
-        ]
+        if len(texts):
+            imgs = [
+                text2image(
+                    text=t,
+                    font=font,
+                    direction=direction,
+                    text_color=text_color,
+                    background_color=background_color,
+                    height=height if direction == 'ltr' else None,
+                    width=width if direction == 'ttb' else None,
+                    offset=offset,
+                )[0] for t in texts
+            ]
+        else:
+            img = np.zeros((height, width, 3)) + background_color
+            imgs = [img.astype(np.uint8)]
 
         if direction == 'ltr':
 
