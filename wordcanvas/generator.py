@@ -105,10 +105,13 @@ class WordCanvas:
             font_bank_fs = D.get_files(font_bank, suffix=['.ttf', '.otf'])
             self.weighted_font = None
             self._font_bank_dir = font_bank
-            self._font_bank = [
-                load_truetype_font(font, size=text_size)
-                for font in D.Tqdm(font_bank_fs)
-            ]
+
+            _bank = {}
+            for font in D.Tqdm(font_bank_fs):
+                if font.stem in _bank:
+                    continue
+                _bank[font.stem] = load_truetype_font(font, size=text_size)
+            self._font_bank = _bank
 
             if random_text:
                 # Overwrite font_chars_tables settings
@@ -118,6 +121,10 @@ class WordCanvas:
                 number_font_chars = {}
                 for font in D.Tqdm(font_bank_fs):
                     _chars = get_supported_characters(font)
+                    if font.stem in font_chars_tables:
+                        print(
+                            f'Find & Skip duplicated font in FONT_BANK: {D.colorstr(font.stem, "RED")}.')
+                        continue
                     font_chars_tables[font.stem] = _chars
                     number_font_chars[font.stem] = len(_chars)
                     unique_chars.update(_chars)
@@ -396,7 +403,9 @@ class WordCanvas:
             weighted_font = None
             if self.use_random_font_weight:
                 weighted_font = list(self.weighted_font.values())
-            font = np.random.choice(self._font_bank, p=weighted_font)
+            candi_font = list(self._font_bank.keys())
+            font_idx = np.random.choice(len(candi_font), p=weighted_font)
+            font = self._font_bank[candi_font[font_idx]]
             font_name = font.path.stem
         else:
             font = self.font
@@ -476,7 +485,7 @@ class WordCanvas:
 #                      align_mode=AlignMode.Scatter, direction='ltr',
 #                      text_aspect_ratio=1, random_text=True,
 #                      random_text_color=True, random_background_color=True,
-#                      random_align_mode=True, use_random_font_weight=False,
+#                      random_align_mode=True, use_random_font_weight=True,
 #                      output_direction=OutputDirection.Remain)
 #     breakpoint()
 #     for _ in D.Tqdm(range(100000)):
