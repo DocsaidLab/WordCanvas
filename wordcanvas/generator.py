@@ -57,6 +57,7 @@ class WordCanvas:
         enable_all_random: bool = False,
         font_bank: Union[str, Path] = DEFAULT_FONT_BANK,
         random_font: bool = False,
+        use_random_font_weight: bool = False,
         random_text: bool = False,
         min_random_text_length: int = 1,
         max_random_text_length: int = 7,
@@ -70,6 +71,7 @@ class WordCanvas:
         self._font_bank = None
         self._font_bank_dir = None
         self._random_font = random_font
+        self._use_random_font_weight = use_random_font_weight
 
         self.font = load_truetype_font(font_path, size=text_size)
         _chars = get_supported_characters(font_path)
@@ -101,6 +103,7 @@ class WordCanvas:
         if random_font:
             print('Loading all fonts from bank...')
             font_bank_fs = D.get_files(font_bank, suffix=['.ttf', '.otf'])
+            self.weighted_font = None
             self._font_bank_dir = font_bank
             self._font_bank = [
                 load_truetype_font(font, size=text_size)
@@ -112,9 +115,11 @@ class WordCanvas:
                 print('Building character tables...')
                 unique_chars = set()
                 font_chars_tables = {}
+                number_font_chars = {}
                 for font in D.Tqdm(font_bank_fs):
                     _chars = get_supported_characters(font)
                     font_chars_tables[font.stem] = _chars
+                    number_font_chars[font.stem] = len(_chars)
                     unique_chars.update(_chars)
 
                 unique_chars = sorted(unique_chars, key=ord)
@@ -122,6 +127,14 @@ class WordCanvas:
                     char: i for i, char in enumerate(unique_chars)
                 }
                 self.font_chars_tables = font_chars_tables
+
+                if use_random_font_weight:
+                    sum_number_font_chars = sum(number_font_chars.values())
+                    self.weighted_font = {
+                        font.stem: number_font_chars[font.stem] /
+                        sum_number_font_chars
+                        for font in font_bank_fs
+                    }
 
     @property
     def text_size(self):
@@ -138,6 +151,10 @@ class WordCanvas:
     @property
     def random_font(self):
         return self._random_font
+
+    @property
+    def use_random_font_weight(self):
+        return self._use_random_font_weight
 
     def __repr__(self):
         return self.dashboard
@@ -166,6 +183,8 @@ class WordCanvas:
                 self.random_font), "reinit", "bool", "Randomize font. Overwrite `font_path`."],
             ["random_text", self.colorize(
                 self.random_text), "reinit", "bool", "Randomize text. Overwrite input text."],
+            ["use_random_font_weight", self.colorize(
+                self.use_random_font_weight), "reinit", "bool", "Use random font weight. Only activated when the `random_font` setting is set to True."],
             ["text_size", self._text_size, "reinit", "int", "Size of font."],
             ["direction", self.direction, "set",
                 "str", "Text direction. (ltr | ttb)"],
@@ -374,7 +393,10 @@ class WordCanvas:
 
         if self.random_font:
             # Load a random font from the bank
-            font = np.random.choice(self._font_bank)
+            weighted_font = None
+            if self.use_random_font_weight:
+                weighted_font = list(self.weighted_font.values())
+            font = np.random.choice(self._font_bank, p=weighted_font)
             font_name = font.path.stem
         else:
             font = self.font
@@ -450,15 +472,16 @@ class WordCanvas:
 
 #     from pprint import pprint
 
-#     gen = WordCanvas(output_size=(64, 512), random_font=False,
+#     gen = WordCanvas(output_size=(64, 512), random_font=True,
 #                      align_mode=AlignMode.Scatter, direction='ltr',
 #                      text_aspect_ratio=1, random_text=True,
 #                      random_text_color=True, random_background_color=True,
-#                      random_align_mode=True,
+#                      random_align_mode=True, use_random_font_weight=False,
 #                      output_direction=OutputDirection.Remain)
-
+#     breakpoint()
 #     for _ in D.Tqdm(range(100000)):
 #         img, infos = gen('測試輸出')
 
+#     img, infos = gen('測試輸出')
 #     pprint(infos)
 #     D.imwrite(img)
