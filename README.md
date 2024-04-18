@@ -1,4 +1,4 @@
-[English](./README_en.md) | **[中文](./README.md)**
+**[English](./README.md)** | [中文](./README_tw.md)
 
 # WordCanvas
 
@@ -8,23 +8,23 @@
     <a href=""><img src="https://img.shields.io/badge/python-3.8+-aff.svg"></a>
 </p>
 
-## 介紹
+## Introduction
 
 <div align="center">
     <img src="./docs/title.jpg" width="800">
 </div>
 
-本專案的核心功能為「**文字圖像生成工具**」，取名為 **WordCanvas**，即「文字畫布」的意思。
+The core functionality of this project is the "Text Image Generation Tool," named **WordCanvas**. This title translates to "Text Canvas," indicating its primary purpose.
 
-我們透過合成資料的方式，生成大量多樣性的中文文字圖像，以應對資料量不足、類別不平衡、缺乏多樣性等問題。對此我們參考了一些現有的文字合成工具，他們的設計方式帶給了我們很多啟發，讓我們決定從零開始創建了一個新的文字圖像生成器。
+By synthesizing data, we generate a vast array of diverse Chinese text images to address issues such as insufficient data volume, class imbalance, and lack of diversity. We drew inspiration from some existing text synthesis tools in designing our approach, which led us to create a new text image generator from scratch.
 
-## 快速開始
+## Quick Start
 
-套件安裝和使用的方式，請參閱 [**WordCanvas Documents**](https://docsaid.org/wordcanvas/intro/)。
+For information on how to install and use this package, please refer to the [**WordCanvas Documents**](https://docsaid.org/en/wordcanvas/intro).
 
-## 引用
+## Citation
 
-如果你認為我們的工作對你有幫助，請引用以下內容：
+If you find our work helpful, please cite the following:
 
 ```bibtex
 @misc{yuan2024wordcanvas,
