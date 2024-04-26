@@ -20,7 +20,7 @@ By synthesizing data, we generate a vast array of diverse Chinese text images to
 
 ## Quick Start
 
-For information on how to install and use this package, please refer to the [**WordCanvas Documents**](https://docsaid.org/en/wordcanvas/intro).
+For information on how to install and use this package, please refer to the [**WordCanvas Documents**](https://docsaid.org/en/docs/wordcanvas/intro).
 
 ## Citation
 

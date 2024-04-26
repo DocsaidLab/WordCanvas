@@ -20,7 +20,7 @@
 
 ## 快速開始
 
-套件安裝和使用的方式，請參閱 [**WordCanvas Documents**](https://docsaid.org/wordcanvas/intro/)。
+套件安裝和使用的方式，請參閱 [**WordCanvas Documents**](https://docsaid.org/docs/wordcanvas/intro/)。
 
 ## 引用
 
