@@ -107,10 +107,20 @@ class WordCanvas:
             self._font_bank_dir = font_bank
 
             _bank = {}
+            _font_bank_fs = []
             for font in D.Tqdm(font_bank_fs):
                 if font.stem in _bank:
                     continue
-                _bank[font.stem] = load_truetype_font(font, size=text_size)
+                try:
+                    _font = load_truetype_font(font, size=text_size)
+                    _bank[font.stem] = _font
+                    _font_bank_fs.append(font)
+                except Exception as e:
+                    print(
+                        f'Error loading font: {D.colorstr(font.stem, "RED")}, Skip.')
+                    continue
+
+            font_bank_fs = _font_bank_fs
             self._font_bank = _bank
 
             if random_text:
@@ -123,7 +133,7 @@ class WordCanvas:
                     _chars = get_supported_characters(font)
                     if font.stem in font_chars_tables:
                         print(
-                            f'Find & Skip duplicated font in FONT_BANK: {D.colorstr(font.stem, "RED")}.')
+                            f'Find duplicated font in FONT_BANK: {D.colorstr(font.stem, "BLUE")}, Skip.')
                         continue
                     font_chars_tables[font.stem] = _chars
                     number_font_chars[font.stem] = len(_chars)
