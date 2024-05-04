@@ -40,7 +40,15 @@ def text2image(
     """
 
     left, top, right, bottom = font.getbbox(text, direction=direction)
-    _, _offset = font.getmask2(text, direction=direction)
+
+    try:
+        _, _offset = font.getmask2(text, direction=direction)
+    except Exception as e:
+        raise ValueError(
+            f"Something went wrong while rendering the text: {text}. Error: {e}.\n"
+            f"Auto-Logging the font information: \n\n\t{font.getname()}\n\n"
+            f"DO NOT USE THIS FONT FOR RENDERING TEXTS.\n\n"
+        )
 
     text_width = max(right - left, 1) if width is None else width
     text_height = max(bottom - top, 1) if height is None else height

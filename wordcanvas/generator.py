@@ -303,7 +303,15 @@ class WordCanvas:
         left, top, right, bottom = font.getbbox(text, direction=direction)
         width = max(right - left, 1)
         height = max(bottom - top, 1)
-        _, offset = font.getmask2(text, direction=direction)
+
+        try:
+            _, offset = font.getmask2(text, direction=direction)
+        except Exception as e:
+            raise ValueError(
+                f"Something went wrong while rendering the text: {text}. Error: {e}.\n"
+                f"Auto-Logging the font information: \n\n\t{font.getname()}\n\n"
+                f"DO NOT USE THIS FONT FOR RENDERING TEXTS.\n\n"
+            )
 
         texts = split_text(text)
 
