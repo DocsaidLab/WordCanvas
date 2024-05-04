@@ -127,6 +127,7 @@ class WordCanvas:
             font_bank_fs = _font_bank_fs
             self._font_bank = _bank
 
+            _font_bank_fs = []
             if random_text:
                 # Overwrite font_chars_tables settings
                 print('Building character tables...')
@@ -134,11 +135,27 @@ class WordCanvas:
                 font_chars_tables = {}
                 number_font_chars = {}
                 for font in D.Tqdm(font_bank_fs):
+
                     _chars = get_supported_characters(font)
+
+                    # checking font characters
+                    # 不支援範圍：異體選擇字元補充區（Variation Selectors Supplement）
+                    # U+E0100 ～ U+E01EF
+                    checking_chars = list(map(ord, _chars))
+                    checking_chars = np.array(checking_chars)
+                    if (checking_chars > int("0xE0100", 16)).any():
+                        print(
+                            f'\n\nFont: {D.colorstr(font.stem, "GREEN")} is not supported.\n'
+                            f"Some characters are in the Variation Selectors Supplement. Skip.\n\n"
+                        )
+                        continue
+
                     font_chars_tables[font.stem] = _chars
                     number_font_chars[font.stem] = len(_chars)
                     unique_chars.update(_chars)
+                    _font_bank_fs.append(font)
 
+                font_bank_fs = _font_bank_fs
                 unique_chars = sorted(unique_chars, key=ord)
                 self.chars_table = {
                     char: i for i, char in enumerate(unique_chars)
