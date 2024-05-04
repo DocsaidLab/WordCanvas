@@ -116,8 +116,7 @@ class WordCanvas:
                     continue
 
                 try:
-                    _font = load_truetype_font(font, size=text_size)
-                    _bank[font.stem] = _font
+                    _bank[font.stem] = load_truetype_font(font, size=text_size)
                     _font_bank_fs.append(font)
                 except:
                     print(
@@ -127,9 +126,11 @@ class WordCanvas:
             font_bank_fs = _font_bank_fs
             self._font_bank = _bank
 
-            _bank = {}
-            _font_bank_fs = []
             if random_text:
+
+                _bank = {}
+                _font_bank_fs = []
+
                 # Overwrite font_chars_tables settings
                 print('Building character tables...')
                 unique_chars = set()
@@ -155,7 +156,7 @@ class WordCanvas:
                     number_font_chars[font.stem] = len(_chars)
                     unique_chars.update(_chars)
 
-                    _bank[font.stem] = _font
+                    _bank[font.stem] = load_truetype_font(font, size=text_size)
                     _font_bank_fs.append(font)
 
                 font_bank_fs = _font_bank_fs
