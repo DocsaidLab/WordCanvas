@@ -127,6 +127,7 @@ class WordCanvas:
             font_bank_fs = _font_bank_fs
             self._font_bank = _bank
 
+            _bank = {}
             _font_bank_fs = []
             if random_text:
                 # Overwrite font_chars_tables settings
@@ -153,9 +154,13 @@ class WordCanvas:
                     font_chars_tables[font.stem] = _chars
                     number_font_chars[font.stem] = len(_chars)
                     unique_chars.update(_chars)
+
+                    _bank[font.stem] = _font
                     _font_bank_fs.append(font)
 
                 font_bank_fs = _font_bank_fs
+                self._font_bank = _bank
+
                 unique_chars = sorted(unique_chars, key=ord)
                 self.chars_table = {
                     char: i for i, char in enumerate(unique_chars)
