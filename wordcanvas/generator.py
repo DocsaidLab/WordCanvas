@@ -307,11 +307,10 @@ class WordCanvas:
                 matches = list(text)
             return matches
 
-        left, top, right, bottom = font.getbbox(text, direction=direction)
-        width = max(right - left, 1)
-        height = max(bottom - top, 1)
-
         try:
+            left, top, right, bottom = font.getbbox(text, direction=direction)
+            width = max(right - left, 1)
+            height = max(bottom - top, 1)
             _, offset = font.getmask2(text, direction=direction)
         except Exception as e:
             raise ValueError(

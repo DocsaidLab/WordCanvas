@@ -39,9 +39,8 @@ def text2image(
         np.ndarray: A NumPy array representing the generated image.
     """
 
-    left, top, right, bottom = font.getbbox(text, direction=direction)
-
     try:
+        left, top, right, bottom = font.getbbox(text, direction=direction)
         _, _offset = font.getmask2(text, direction=direction)
     except Exception as e:
         raise ValueError(
