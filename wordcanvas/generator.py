@@ -66,78 +66,55 @@ class WordCanvas:
         random_align_mode: bool = False,
         random_background_color: bool = False,
     ):
-        self._font_path = font_path
+        # Private settings
         self._text_size = text_size
-        self._font_bank = None
-        self._font_bank_dir = None
+        self._font_path = font_path
+        self._font_bank = font_bank
+        self._font_tb = {}
         self._random_font = random_font
-        self._use_random_font_weight = use_random_font_weight
 
-        self.font = load_truetype_font(font_path, size=text_size)
-        _chars = get_supported_characters(font_path)
-        _chars = sorted(_chars, key=ord)
-        self.chars_table = {char: i for i, char in enumerate(_chars)}
-        self.font_chars_tables = {
-            Path(font_path).stem: get_supported_characters(font_path)
-        }
-
+        # Basic settings
         self.direction = direction
         self.text_color = text_color
         self.background_color = background_color
         self.text_aspect_ratio = text_aspect_ratio
-        self.align_mode = AlignMode.obj_to_enum(align_mode)
         self.output_size = output_size
+        self.align_mode = AlignMode.obj_to_enum(align_mode)
         self.output_direction = OutputDirection.obj_to_enum(output_direction)
         self.min_random_text_length = min_random_text_length
         self.max_random_text_length = max_random_text_length
 
         # Random settings
         self.random_text = random_text  # Not affected by `enable_all_random`
-
         self.enable_all_random = enable_all_random
         self.random_align_mode = random_align_mode or enable_all_random
         self.random_direction = random_direction or enable_all_random
         self.random_text_color = random_text_color or enable_all_random
         self.random_background_color = random_background_color or enable_all_random
 
+        # Only if `random_font` is True and `random_text` is True
+        # and `use_random_font_weight` is True, the font weight will be used.
+        if random_font and random_text:
+            self._use_random_font_weight = use_random_font_weight
+        else:
+            self._use_random_font_weight = False
+
+        self.font_chars_tables = {}
         if random_font:
+            # Using random fonts with bank
             print('Loading all fonts from bank...')
-            font_bank_fs = D.get_files(font_bank, suffix=['.ttf', '.otf'])
-            self.weighted_font = None
-            self._font_bank_dir = font_bank
 
-            _bank = {}
-            _font_bank_fs = []
-            for font in D.Tqdm(font_bank_fs):
+            unique_chars = set()
+            number_font_chars = {}
+            font_bank_fs = []
+            for font in D.get_files(font_bank, suffix=['.ttf', '.otf']):
 
-                if font.stem in _bank:
+                if font.stem in self._font_tb:
                     print(
                         f'Find duplicated font in FONT_BANK: {D.colorstr(font.stem, "BLUE")}, Skip.')
                     continue
 
                 try:
-                    _bank[font.stem] = load_truetype_font(font, size=text_size)
-                    _font_bank_fs.append(font)
-                except:
-                    print(
-                        f'Error loading font: {D.colorstr(font.stem, "RED")}, Skip.')
-                    continue
-
-            font_bank_fs = _font_bank_fs
-            self._font_bank = _bank
-
-            if random_text:
-
-                _bank = {}
-                _font_bank_fs = []
-
-                # Overwrite font_chars_tables settings
-                print('Building character tables...')
-                unique_chars = set()
-                font_chars_tables = {}
-                number_font_chars = {}
-                for font in D.Tqdm(font_bank_fs):
-
                     _chars = get_supported_characters(font)
 
                     # checking font characters
@@ -152,60 +129,67 @@ class WordCanvas:
                         )
                         continue
 
-                    font_chars_tables[font.stem] = _chars
                     number_font_chars[font.stem] = len(_chars)
                     unique_chars.update(_chars)
+                    font_bank_fs.append(font)
 
-                    _bank[font.stem] = load_truetype_font(font, size=text_size)
-                    _font_bank_fs.append(font)
+                    self.font_chars_tables[font.stem] = _chars
+                    self._font_tb[font.stem] = load_truetype_font(
+                        font, size=text_size)
 
-                font_bank_fs = _font_bank_fs
-                self._font_bank = _bank
+                except:
+                    print(
+                        f'Error loading font: {D.colorstr(font.stem, "RED")}, Skip.')
+                    continue
 
-                unique_chars = sorted(unique_chars, key=ord)
-                self.chars_table = {
-                    char: i for i, char in enumerate(unique_chars)
+            self.chars_table = {
+                char: i for i, char in enumerate(sorted(unique_chars, key=ord))
+            }
+
+            if self.use_random_font_weight:
+                sum_chars = sum(number_font_chars.values())
+                self.weighted_font = {
+                    font.stem: number_font_chars[font.stem] / sum_chars
+                    for font in font_bank_fs
                 }
-                self.font_chars_tables = font_chars_tables
 
-                if use_random_font_weight:
-                    sum_number_font_chars = sum(number_font_chars.values())
-                    self.weighted_font = {
-                        font.stem: number_font_chars[font.stem] /
-                        sum_number_font_chars
-                        for font in font_bank_fs
-                    }
+        else:
+            # Using single font
+            self.font = load_truetype_font(font_path, size=text_size)
+            _chars = get_supported_characters(font_path)
+            self.chars_table = {char: i for i, char in enumerate(_chars)}
+            self.font_chars_tables[Path(font_path).stem] = _chars
 
-    @property
+    @ property
     def text_size(self):
         return self._text_size
 
-    @property
+    @ property
     def font_path(self):
         return self._font_path
 
-    @property
+    @ property
     def font_bank(self):
-        return self._font_bank_dir
+        return self._font_bank
 
-    @property
+    @ property
     def random_font(self):
         return self._random_font
 
-    @property
+    @ property
     def use_random_font_weight(self):
         return self._use_random_font_weight
 
     def __repr__(self):
         return self.dashboard
 
-    @staticmethod
+    @ staticmethod
     def colorize(value):
         def select_color(value):
             return D.COLORSTR.GREEN if value else D.COLORSTR.RED
         return D.colorstr(value, select_color(value))
 
-    @property
+    @ property
     def dashboard(self):
 
         table = PrettyTable()
@@ -444,9 +428,9 @@ class WordCanvas:
             weighted_font = None
             if self.use_random_font_weight:
                 weighted_font = list(self.weighted_font.values())
-            candi_font = list(self._font_bank.keys())
+            candi_font = list(self._font_tb.keys())
             font_idx = np.random.choice(len(candi_font), p=weighted_font)
-            font = self._font_bank[candi_font[font_idx]]
+            font = self._font_tb[candi_font[font_idx]]
             font_name = font.path.stem
         else:
             font = self.font
