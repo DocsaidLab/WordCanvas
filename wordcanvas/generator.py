@@ -84,8 +84,8 @@ class WordCanvas:
 
         if Path(font_path).stem in block_font_list:
             raise ValueError(
-                f"Font: {D.colorstr(Path(font_path).stem, 'RED')} is in the block list."
-                f"It means that the font has some problems and cannot be used."
+                f"\nFont: {D.colorstr(Path(font_path).stem, 'RED')} is in the block list.\n"
+                f"It means that the font has some problems and cannot be used.\n"
             )
 
         # Private settings
