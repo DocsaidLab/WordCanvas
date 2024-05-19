@@ -1,8 +1,7 @@
 import random
-import re
 from enum import IntEnum
 from pathlib import Path
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 import docsaidkit as D
 import numpy as np
@@ -42,6 +41,21 @@ class WordCanvas:
     # Using `font_path` to setting for your own font.
     DEFAULT_FONT_PATH = DIR / 'fonts' / 'NotoSansTC-Regular.otf'
 
+    DEFAULT_FONT_BLOCK_LIST = [
+        "AdobeBlank-Regular",
+        "AppleGothic",
+        "IMFeFCsc28P",
+        "JejuMyeongjo-Regular",
+        "KumarOne-Regular",
+        "LastResort",
+        "NotoColorEmojiCompatTest-Regular",
+        "NotoSansDevanagariUI-Thin",
+        "NotoSansOldHungarian-Regular",
+        "RubikPixels-Regula",
+        "SoukouMincho",
+        "851tegaki_zatsu_normal_0883",
+    ]
+
     def __init__(
         self,
         font_path: Union[str, Path] = DEFAULT_FONT_PATH,
@@ -53,6 +67,7 @@ class WordCanvas:
         align_mode: str = AlignMode.Default,
         output_size: Tuple[int, int] = None,
         output_direction: str = OutputDirection.Default,
+        block_font_list: List[str] = DEFAULT_FONT_BLOCK_LIST,
         *,
         enable_all_random: bool = False,
         font_bank: Union[str, Path] = DEFAULT_FONT_BANK,
@@ -66,6 +81,13 @@ class WordCanvas:
         random_align_mode: bool = False,
         random_background_color: bool = False,
     ):
+
+        if Path(font_path).stem in block_font_list:
+            raise ValueError(
+                f"Font: {D.colorstr(Path(font_path).stem, 'RED')} is in the block list."
+                f"It means that the font has some problems and cannot be used."
+            )
+
         # Private settings
         self._text_size = text_size
         self._font_path = font_path
@@ -112,6 +134,13 @@ class WordCanvas:
                 if font.stem in self._font_tb:
                     print(
                         f'Find duplicated font in FONT_BANK: {D.colorstr(font.stem, "BLUE")}, Skip.')
+                    continue
+
+                if font.stem in block_font_list:
+                    print(
+                        f"Font: {D.colorstr(font.stem, 'RED')} is in the block list."
+                        f"It means that the font has some problems and cannot be used."
+                    )
                     continue
 
                 try:
