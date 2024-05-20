@@ -42,17 +42,63 @@ class WordCanvas:
     DEFAULT_FONT_PATH = DIR / 'fonts' / 'NotoSansTC-Regular.otf'
 
     DEFAULT_FONT_BLOCK_LIST = [
-        "AdobeBlank-Regular",
+        "AbyssinicaSIL",
+        "AdobeBlank",
+        "Akatab",
+        "Alkalami",
+        "Andika",
+        "AnnapurnaSIL",
+        "AoboshiOne",
         "AppleGothic",
+        "BM-HANNA",
+        "CharisSIL",
+        "DaiBannaSIL",
+        "FlowCircular",
+        "GentiumBookPlus",
+        "Harmattan",
+        "GentiumPlus",
         "IMFeFCsc28P",
-        "JejuMyeongjo-Regular",
-        "KumarOne-Regular",
+        "JejuGothic"
+        "JejuMyeongjo",
+        "KayPhoDu",
+        "KouzanMouhitu",
+        "KumarOne",
         "LastResort",
-        "NotoColorEmojiCompatTest-Regular",
-        "NotoSansDevanagariUI-Thin",
-        "NotoSansOldHungarian-Regular",
-        "RubikPixels-Regula",
+        "LakkiReddy",
+        "Lateef",
+        "LisuBosa",
+        "Lohit-Devanagari",
+        "Mingzat",
+        "Namdhinggo",
+        "Narnoor",
+        "NotoColorEmojiCompatTest",
+        "NotoColorEmoji",
+        "NotoSansDevanagariUI",
+        "NotoSansHK[wght]",
+        "NotoSansJP[wght]",
+        "NotoSansKR[wght]",
+        "NotoSansSC[wght]",
+        "NotoSansTC[wght]",
+        "NotoSerifHK[wght]",
+        "NotoSerifJP[wght]",
+        "NotoSerifKR[wght]",
+        "NotoSerifSC[wght]",
+        "NotoSerifTC[wght]",
+        "NotoSansOldHungarian",
+        "NuosuSIL",
+        "Padauk",
+        "PadyakkeExpandedOne",
+        "Ponnala",
+        "RedHatDisplay",
+        "RedHatMono",
+        "RedHatText",
+        "Ranga",
+        "RaviPrakash",
+        "RubikPixels",
+        "Ruwudu",
+        "ScheherazadeNew",
         "SoukouMincho",
+        "Walkway",
         "851tegaki_zatsu_normal_0883",
     ]
 
@@ -82,11 +128,12 @@ class WordCanvas:
         random_background_color: bool = False,
     ):
 
-        if Path(font_path).stem in block_font_list:
-            raise ValueError(
-                f"\nFont: {D.colorstr(Path(font_path).stem, 'RED')} is in the block list.\n"
-                f"It means that the font has some problems and cannot be used.\n"
-            )
+        for block_font in block_font_list:
+            if block_font in Path(font_path).stem:
+                raise ValueError(
+                    f"\nFont: {D.colorstr(Path(font_path).stem, 'RED')} is in the block list.\n"
+                    f"It means that the font has some problems and cannot be used.\n"
+                )
 
         # Private settings
         self._text_size = text_size
@@ -136,12 +183,13 @@ class WordCanvas:
                         f'Find duplicated font in FONT_BANK: {D.colorstr(font.stem, "BLUE")}, Skip.')
                     continue
 
-                if font.stem in block_font_list:
-                    print(
-                        f"Font: {D.colorstr(font.stem, 'RED')} is in the block list."
-                        f"It means that the font has some problems and cannot be used."
-                    )
-                    continue
+                for block_font in block_font_list:
+                    if block_font in font.stem:
+                        print(
+                            f"Font: {D.colorstr(font.stem, 'RED')} is in the block list."
+                            f"It means that the font has some problems and cannot be used."
+                        )
+                        continue
 
                 try:
                     _chars = get_supported_characters(font)
