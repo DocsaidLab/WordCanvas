@@ -35,12 +35,16 @@ jobs:
         run: |
           sed -i "s/__version__ = '[0-9]\+\(\.[0-9]\+\)\{1,2\}\(rc[0-9]\+\|[ab][0-9]\+\)\?'/__version__ = '${{ github.event.inputs.version_tag }}'/g" wordcanvas/__init__.py
 
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "[C] Update python version"
+
       - name: Commit & Push changes of Version Updating
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.event.inputs.branch }}
-          message: "[C] Update python version"
 
       - name: Build wheel
         run: |
