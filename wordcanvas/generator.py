@@ -132,7 +132,7 @@ class WordCanvas:
             if block_font in Path(font_path).stem:
                 raise ValueError(
                     f"\nFont: {D.colorstr(Path(font_path).stem, 'RED')} is in the block list.\n"
-                    f"It means that the font has some problems and cannot be used.\n"
+                    f"\tIt means that the font has some problems and cannot be used.\n"
                 )
 
         # Private settings
@@ -178,18 +178,18 @@ class WordCanvas:
             font_bank_fs = []
             for font in D.get_files(font_bank, suffix=['.ttf', '.otf']):
 
+                for block_font in block_font_list:
+                    if block_font in font.stem:
+                        print(
+                            f"\rFont: {D.colorstr(font.stem, 'RED')} is in the block list.\n"
+                            f"\tIt means that the font has some problems and cannot be used.\n"
+                        )
+                        continue
+
                 if font.stem in self._font_tb:
                     print(
                         f'Find duplicated font in FONT_BANK: {D.colorstr(font.stem, "BLUE")}, Skip.')
                     continue
-
-                for block_font in block_font_list:
-                    if block_font in font.stem:
-                        print(
-                            f"Font: {D.colorstr(font.stem, 'RED')} is in the block list."
-                            f"It means that the font has some problems and cannot be used."
-                        )
-                        continue
 
                 try:
                     _chars = get_supported_characters(font)
