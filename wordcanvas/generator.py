@@ -384,6 +384,14 @@ class WordCanvas:
             matches = [m for m in matches if not regex.match(r'\p{Z}', m)]
             if len(matches) == 1:
                 matches = list(text)
+            matches_with_space = []
+
+            # 防止圖像太小，導致所有字元黏在一起
+            for i, m in enumerate(matches):
+                matches_with_space.append(m)
+                if i != len(matches) - 1:
+                    matches_with_space.append(' ')
+
             return matches
 
         try:
