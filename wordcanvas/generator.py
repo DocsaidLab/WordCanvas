@@ -62,7 +62,7 @@ class WordCanvas:
         "JejuMyeongjo",
         "KayPhoDu",
         "KouzanMouhitu",
-        "KouzanMouhituFontOTF"
+        "KouzanMouhituFontOTF",
         "KumarOne",
         "LastResort",
         "LakkiReddy",
