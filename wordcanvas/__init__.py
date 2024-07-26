@@ -1,3 +1,4 @@
+from .gen_barcode import *
 from .generator import *
 from .imgaug import *
 from .text2image import *
