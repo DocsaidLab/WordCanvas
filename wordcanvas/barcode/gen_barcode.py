@@ -12,9 +12,6 @@ from .codetable import CODE128
 DIR = D.get_curdir(__file__)
 
 
-__all__ = ['Code128Generator', 'CodeType']
-
-
 class CodeType(D.EnumCheckMixin, Enum):
     Code128_A = 0
     Code128_B = 1
@@ -127,7 +124,6 @@ class Code39Generator:
 
     def __init__(
         self,
-        img_size: Union[tuple, list] = (1000, 1000),
         width_rate: int = 2,
         color: tuple = (0, 0, 0)
     ):
@@ -143,7 +139,6 @@ class Code39Generator:
 
         table = CODE39
         self.table = pd.DataFrame.from_dict(table)
-        self.height, self.width = tuple(img_size)
         self.convert_dict = {'w': '0', 'W': '0' *
                              width_rate, 'b': '1', 'B': '1'*width_rate}
         self.color = color
