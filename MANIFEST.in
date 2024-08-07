@@ -1,2 +1,3 @@
 recursive-include wordcanvas/fonts *.ttf
 recursive-include wordcanvas/fonts *.otf
+recursive-include wordcanvas *.json
