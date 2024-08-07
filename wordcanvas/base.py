@@ -13,10 +13,6 @@ from .utils import get_supported_characters, load_truetype_font
 
 DIR = D.get_curdir(__file__)
 
-__all__ = [
-    'WordCanvas', 'AlignMode', 'OutputDirection',
-]
-
 
 class AlignMode(D.EnumCheckMixin, IntEnum):
     Default = 0

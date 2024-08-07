@@ -4,8 +4,6 @@ from typing import Tuple
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-__all__ = ['text2image']
-
 
 def text2image(
     text: str,

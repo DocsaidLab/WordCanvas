@@ -7,8 +7,6 @@ import docsaidkit as D
 import numpy as np
 from PIL import Image
 
-__all__ = ['Shear', 'ExampleAug']
-
 
 class Shear:
 
