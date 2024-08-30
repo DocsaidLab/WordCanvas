@@ -17,6 +17,7 @@ class MRZGenerator:
         background_color: Tuple[int, int, int] = (255, 255, 255),
         interval: int = None,
         delimiter: str = '&',
+        random_text_color: bool = False
     ):
         self.delimiter = delimiter
         self.interval = interval
@@ -24,7 +25,8 @@ class MRZGenerator:
         self.gen = WordCanvas(
             font_path=DIR / 'fonts' / 'OcrB-Regular.ttf',
             text_color=text_color,
-            background_color=background_color
+            background_color=background_color,
+            random_text_color=random_text_color
         )
 
     def gen_random_mrz(self, l: int):
