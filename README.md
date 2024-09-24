@@ -20,7 +20,7 @@ We addressed issues such as insufficient data volume, class imbalance, and lack 
 
 ## Documentation
 
-For information on how to install and use this package, please refer to the [**WordCanvas Documents**](https://docsaid.org/en/docs/wordcanvas/intro). You can get all detailed information about this project from the documents.
+For information on how to install and use this package, please refer to the [**WordCanvas Documents**](https://docsaid.org/en/docs/wordcanvas). You can get all detailed information about this project from the documents.
 
 ## Installation
 

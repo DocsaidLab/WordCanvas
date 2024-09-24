@@ -20,7 +20,7 @@
 
 ## 技術文件
 
-套件安裝和使用的方式，請參閱 [**WordCanvas Documents**](https://docsaid.org/docs/wordcanvas/intro/)。
+套件安裝和使用的方式，請參閱 [**WordCanvas Documents**](https://docsaid.org/docs/wordcanvas)。
 
 在那裡你可以找到所有有關本專案的詳細資訊。
 
@@ -30,7 +30,7 @@
 
 若要使用本專案，你必須直接從 Github 上 clone 本專案，然後安裝相依套件。
 
-- 注意：安裝前請確認你已經安裝了 `DocsaidKit`。如果你還沒有安裝 `DocsaidKit`，請參考 [**DocsaidKit 安裝指南**](https://docsaid.org/en/docs/docsaidkit/installation)。
+- 注意：安裝前請確認你已經安裝了 `DocsaidKit`。如果你還沒有安裝 `DocsaidKit`，請參考 [**DocsaidKit 安裝指南**](https://docsaid.org/docs/docsaidkit/installation)。
 
 ### 安裝步驟
 
