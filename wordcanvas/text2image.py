@@ -53,8 +53,15 @@ def text2image(
 
     # Make sure the text color and background color are in tuple format
     # And accept any array-like input
-    text_color = tuple(np.array(text_color).tolist())
-    background_color = tuple(np.array(background_color).tolist())
+    text_color = tuple(
+        min(255, max(0, int(c)))
+        for c in text_color
+    )
+
+    background_color = tuple(
+        min(255, max(0, int(c)))
+        for c in background_color
+    )
 
     img = Image.new(
         mode='RGB',

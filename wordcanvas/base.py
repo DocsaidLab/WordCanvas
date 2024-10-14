@@ -111,7 +111,7 @@ class WordCanvas:
             unique_chars = set()
             number_font_chars = {}
             font_bank_fs = []
-            for font in D.get_files(font_bank, suffix=['.ttf', '.otf']):
+            for font in D.Tqdm(D.get_files(font_bank, suffix=['.ttf', '.otf'])):
 
                 for block_font in block_font_list:
                     if block_font in font.stem:
@@ -127,7 +127,7 @@ class WordCanvas:
                     continue
 
                 try:
-                    _chars = get_supported_characters(font)
+                    _chars = get_supported_characters(font, use_cache=True)
 
                     # checking font characters
                     # 不支援範圍：異體選擇字元補充區（Variation Selectors Supplement）
