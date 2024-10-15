@@ -113,13 +113,18 @@ class WordCanvas:
             font_bank_fs = []
             for font in D.Tqdm(D.get_files(font_bank, suffix=['.ttf', '.otf'])):
 
+                is_block_font = False
                 for block_font in block_font_list:
                     if block_font in font.stem:
                         print(
                             f"\rFont: {D.colorstr(font.stem, 'RED')} is in the block list.\n"
                             f"\tIt means that the font has some problems and cannot be used.\n"
                         )
-                        continue
+                        is_block_font = True
+                        break
+
+                if is_block_font:
+                    continue
 
                 if font.stem in self._font_tb:
                     print(
