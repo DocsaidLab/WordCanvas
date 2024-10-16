@@ -133,8 +133,12 @@ class WordCanvas:
 
                 try:
                     _chars = get_supported_characters(font, use_cache=True)
+                    if '\xad' in _chars:
+                        _chars.remove('\xad')
+                    if '\n' in _chars:
+                        _chars.remove('\n')
 
-                    # checking font characters
+                    # checking font chara cters
                     # 不支援範圍：異體選擇字元補充區（Variation Selectors Supplement）
                     # U+E0100 ～ U+E01EF
                     checking_chars = list(map(ord, _chars))
