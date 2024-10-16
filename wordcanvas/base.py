@@ -406,8 +406,8 @@ class WordCanvas:
                 imgs = [
                     D.imresize(
                         img,
-                        (int(img.shape[0] * self.text_aspect_ratio),
-                         img.shape[1])
+                        (max(int(img.shape[0] * self.text_aspect_ratio), 1),
+                            img.shape[1])
                     ) for img in imgs
                 ]
 
