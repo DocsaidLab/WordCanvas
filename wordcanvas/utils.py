@@ -128,10 +128,10 @@ def get_supported_characters(
     if not as_strings:
         chars = [ord(char) for char in chars]
 
-    if not (fp := DIR / 'cache').is_dir():
-        fp.mkdir(parents=True)
-
-    dump_json(chars, DIR / 'cache' / f'{name}_cache.json')
+    if use_cache:
+        if not (fp := DIR / 'cache').is_dir():
+            fp.mkdir(parents=True)
+        dump_json(chars, DIR / 'cache' / f'{name}_cache.json')
 
     return chars
 
