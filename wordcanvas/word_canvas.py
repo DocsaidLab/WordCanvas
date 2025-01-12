@@ -221,7 +221,9 @@ class WordCanvas:
                 f"It is not supported in the scatter mode.\n"
             )
 
-        kwargs.pop('return_infos')
+        if 'return_infos' in kwargs:
+            kwargs.pop('return_infos')
+
         _, infos = text2image(
             text=text,
             font=font,
@@ -382,6 +384,7 @@ class WordCanvas:
                 stroke_width=stroke_width,
                 stroke_fill=stroke_fill,
                 spacing=spacing,
+                align=align_mode.name.lower(),
                 return_infos=True
             )
 
