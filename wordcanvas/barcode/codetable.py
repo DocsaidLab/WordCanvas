@@ -1,10 +1,10 @@
 import pandas as pd
-from docsaidkit import dump_json, get_curdir, load_json
+from capybara import dump_json, get_curdir, load_json
 
 DIR = get_curdir(__file__)
 
 
-def load_table():
+def load_128table():
     if (fp := DIR / 'code128_table.json').is_file():
         table128 = load_json(fp)
     else:
@@ -27,6 +27,3 @@ def load_table():
         dump_json(table128, fp)
 
     return table128
-
-
-CODE128 = load_table()

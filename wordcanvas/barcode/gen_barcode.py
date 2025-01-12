@@ -1,18 +1,18 @@
 from enum import Enum
 from typing import Union
 
+import capybara as cb
 import cv2
-import docsaidkit as D
 import numpy as np
 import pandas as pd
 
-from .code39table import CODE39
-from .codetable import CODE128
+from .code39table import load_39table
+from .codetable import load_128table
 
-DIR = D.get_curdir(__file__)
+DIR = cb.get_curdir(__file__)
 
 
-class CodeType(D.EnumCheckMixin, Enum):
+class CodeType(cb.EnumCheckMixin, Enum):
     Code128_A = 0
     Code128_B = 1
     Code128_C = 2
@@ -26,7 +26,7 @@ class Code128Generator:
         color: tuple = (0, 0, 0)
     ):
         """ Code128 barcode generator """
-        table = CODE128
+        table = load_128table
         self.table = pd.DataFrame.from_dict(table)
         self.code_type = CodeType.obj_to_enum(code_type)
         self.color = color
@@ -102,7 +102,7 @@ class Code128Generator:
         # Calibration
         # There is space error between self.width and barcode width within 0~144
         img = img[0:height, 0:len(encode)*thickness]
-        img = D.imresize(img, (height, width), interpolation=D.INTER.NEAREST)
+        img = cb.imresize(img, (height, width), interpolation=cb.INTER.NEAREST)
 
         return img
 
@@ -137,7 +137,7 @@ class Code39Generator:
             raise ValueError(
                 f'width_rate should be at least 2, but got {width_rate}')
 
-        table = CODE39
+        table = load_39table
         self.table = pd.DataFrame.from_dict(table)
         self.convert_dict = {'w': '0', 'W': '0' *
                              width_rate, 'b': '1', 'B': '1'*width_rate}
@@ -201,7 +201,7 @@ class Code39Generator:
         # Calibration
         # There is space error between self.width and barcode width within 0~144
         img = img[0:height, 0:len(encode)*thickness]
-        img = D.imresize(img, (height, width), interpolation=D.INTER.NEAREST)
+        img = cb.imresize(img, (height, width), interpolation=cb.INTER.NEAREST)
 
         return img
 

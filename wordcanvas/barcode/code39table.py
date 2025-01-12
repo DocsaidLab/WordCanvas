@@ -1,13 +1,7 @@
 import pandas as pd
-from docsaidkit import dump_json, get_curdir, load_json
+from capybara import dump_json, get_curdir, load_json
 
 DIR = get_curdir(__file__)
-
-"""
-In Code39 table, there are nine characters in a pattern marked with 'b' and 'w'
-which means 'black' and 'white', and three of those are capital that means wider lines.
-Height & width rate could be 1:2 to 1:3.
-"""
 
 
 def load_39table():
@@ -29,6 +23,3 @@ def load_39table():
         dump_json(table39, fp)
 
     return table39
-
-
-CODE39 = load_39table()

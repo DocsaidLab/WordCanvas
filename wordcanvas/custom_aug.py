@@ -3,8 +3,8 @@ import random
 
 import albumentations as A
 import cv2
-import docsaidkit as D
 import numpy as np
+from capybara import imresize
 from PIL import Image
 
 
@@ -55,7 +55,7 @@ class Shear:
 
             image = image.crop((abs(shift_in_pixels), 0, width, height))
             image.resize((width, height), resample=Image.BICUBIC)
-            image = D.imresize(np.array(image), size=(height, width))
+            image = imresize(np.array(image), size=(height, width))
 
         return image
 
@@ -84,10 +84,7 @@ class ExampleAug:
             A.OneOf([
                 A.MotionBlur(),
                 A.GaussianBlur(),
-                A.Downscale(
-                    scale_min=0.5,
-                    scale_max=0.9,
-                )
+                A.Downscale(scale_range=(0.5, 0.9))
             ]),
 
             A.OneOf([
