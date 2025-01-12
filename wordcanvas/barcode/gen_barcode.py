@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from .code39table import load_39table
-from .codetable import load_128table
+from .code128table import load_128table
 
 DIR = cb.get_curdir(__file__)
 
@@ -26,7 +26,7 @@ class Code128Generator:
         color: tuple = (0, 0, 0)
     ):
         """ Code128 barcode generator """
-        table = load_128table
+        table = load_128table()
         self.table = pd.DataFrame.from_dict(table)
         self.code_type = CodeType.obj_to_enum(code_type)
         self.color = color
@@ -137,7 +137,7 @@ class Code39Generator:
             raise ValueError(
                 f'width_rate should be at least 2, but got {width_rate}')
 
-        table = load_39table
+        table = load_39table()
         self.table = pd.DataFrame.from_dict(table)
         self.convert_dict = {'w': '0', 'W': '0' *
                              width_rate, 'b': '1', 'B': '1'*width_rate}
