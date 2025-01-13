@@ -13,7 +13,7 @@
 ## 介紹
 
 <div align="center">
-    <img src="./docs/title.jpg" width="800">
+    <img src="https://github.com/DocsaidLab/WordCanvas/blob/main/docs/title.jpg?raw=true" width="800">
 </div>
 
 本專案的核心功能為「**文字圖像生成工具**」，取名為 **WordCanvas**，即「文字畫布」的意思。
@@ -71,11 +71,11 @@
    pip install dist/wordcanvas_docsaid-*-py3-none-any.whl
    ```
 
-# 快速開始
+## 快速開始
 
 萬事起頭難，所以我們需要一個簡單的開始。
 
-## 從一個字串開始
+### 從一個字串開始
 
 先給定一個基本宣告，然後就可以開始使用了。
 
@@ -106,14 +106,14 @@ print(infos)
 #  'align': 'left',
 #  'stroke_width': 0,
 #  'stroke_fill': (0, 0, 0),
-#  'font_path': '/home/shayne/workspace/WordCanvas/wordcanvas/fonts/NotoSansTC-Regular.otf',
+#  'font_path': 'fonts/NotoSansTC-Regular.otf',
 #  'font_size_actual': 64,
 #  'font_name': 'NotoSansTC-Regular',
 #  'align_mode': <AlignMode.Left: 0>,
 #  'output_direction': <OutputDirection.Remain: 0>}
 ```
 
-![sample1](./docs/sample1.jpg)
+![sample1](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample1.jpg?raw=true)
 
 > [!TIP]
 > 在預設模式下，輸出影像的尺寸取決於：
@@ -123,7 +123,7 @@ print(infos)
 > 3. 輸出資訊 `infos` 內涵蓋所有繪製參數，包含文字、背景顏色、文字顏色等。
 > 4. 如果要單純輸出影像，設定 `return_infos=False` 即可，這也是預設值。
 
-## 指定特定字型
+### 指定特定字型
 
 使用 `font` 參數可以指定自己喜歡的字型。
 
@@ -139,7 +139,7 @@ text = 'Hello, World!'
 img = gen(text)
 ```
 
-![sample14](./docs/sample14.jpg)
+![sample14](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample14.jpg?raw=true)
 
 當字型不支援輸入文字時，會出現豆腐字。
 
@@ -148,7 +148,7 @@ text = 'Hello, 中文!'
 img = gen(text)
 ```
 
-![sample15](./docs/sample15.jpg)
+![sample15](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample15.jpg?raw=true)
 
 > [!TIP]
 >
@@ -170,7 +170,7 @@ img = gen(text)
 > # >>> Character '文' (0x6587) is not supported by the font.
 > ```
 
-## 設定影像尺寸
+### 設定影像尺寸
 
 使用 `output_size` 參數可以調整影像尺寸。
 
@@ -183,7 +183,7 @@ print(img.shape)
 # >>> (64, 1024, 3)
 ```
 
-![sample4](./docs/sample4.jpg)
+![sample4](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample4.jpg?raw=true)
 
 當設定的尺寸小於文字圖像的尺寸時，會自動縮放文字圖像。
 
@@ -197,9 +197,9 @@ gen = WordCanvas(output_size=(64, 512))  # 高度 64，寬度 512
 img = gen(text)
 ```
 
-![sample8](./docs/sample8.jpg)
+![sample8](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample8.jpg?raw=true)
 
-## 調整背景顏色
+### 調整背景顏色
 
 使用 `background_color` 參數可以調整背景顏色。
 
@@ -210,9 +210,9 @@ gen = WordCanvas(background_color=(255, 0, 0)) # 藍色背景
 img = gen(text)
 ```
 
-![sample2](./docs/sample2.jpg)
+![sample2](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample2.jpg?raw=true)
 
-## 調整文字顏色
+### 調整文字顏色
 
 使用 `text_color` 參數可以調整文字顏色。
 
@@ -223,9 +223,9 @@ gen = WordCanvas(text_color=(0, 255, 0)) # 綠色文字
 img = gen(text)
 ```
 
-![sample3](./docs/sample3.jpg)
+![sample3](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample3.jpg?raw=true)
 
-## 調整文字對齊
+### 調整文字對齊
 
 > [!WARNING]
 > 還記得剛才提到的影像尺寸嗎？
@@ -248,19 +248,19 @@ img = gen(text)
 
 - **中間對齊：`AlignMode.Center`**
 
-  ![sample5](./docs/sample5.jpg)
+  ![sample5](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample5.jpg?raw=true)
 
 - **靠右對齊：`AlignMode.Right`**
 
-  ![sample6](./docs/sample6.jpg)
+  ![sample6](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample6.jpg?raw=true)
 
 - **靠左對齊：`AlignMode.Left`**
 
-  ![sample7](./docs/sample4.jpg)
+  ![sample4](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample4.jpg?raw=true)
 
 - **分散對齊：`AlignMode.Scatter`**
 
-  ![sample8](./docs/sample7.jpg)
+  ![sample7](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample7.jpg?raw=true)
 
 > [!TIP]
 >
@@ -290,7 +290,7 @@ img = gen(text)
 > [!WARNING]
 > 這只是個很簡單的實現，不一定能滿足所有的需求。如果你有更完整拆分字串的解決方案，歡迎提供。
 
-## 調整文字方向
+### 調整文字方向
 
 使用 `direction` 參數可以調整文字方向。
 
@@ -304,7 +304,7 @@ img = gen(text)
   img = gen(text)
   ```
 
-  ![sample9](./docs/sample9.jpg)
+  ![sample9](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample9.jpg?raw=true)
 
 - **輸出直向文字**
 
@@ -316,7 +316,7 @@ img = gen(text)
   img = gen(text)
   ```
 
-  ![sample10](./docs/sample10.jpg)
+  ![sample10](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample10.jpg?raw=true)
 
 - **輸出直向文字且分散對齊**
 
@@ -332,9 +332,9 @@ img = gen(text)
   img = gen(text)
   ```
 
-  ![sample11](./docs/sample11.jpg)
+  ![sample11](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample11.jpg?raw=true)
 
-## 調整輸出方向
+### 調整輸出方向
 
 使用 `output_direction` 參數可以調整輸出方向。
 
@@ -356,7 +356,7 @@ img = gen(text)
   img = gen(text)
   ```
 
-  ![sample12](./docs/sample12.jpg)
+  ![sample12](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample12.jpg?raw=true)
 
 - **橫向文字，垂直輸出**
 
@@ -372,9 +372,9 @@ img = gen(text)
   img = gen(text)
   ```
 
-  ![sample13](./docs/sample13.jpg)
+  ![sample13](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample13.jpg?raw=true)
 
-## 壓扁文字
+### 壓扁文字
 
 有些場景的文字會特別扁，這時候可以使用 `text_aspect_ratio` 參數。
 
@@ -390,12 +390,12 @@ text="壓扁測試"
 img = gen(text)
 ```
 
-![sample16](./docs/sample16.jpg)
+![sample16](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample16.jpg?raw=true)
 
 > [!IMPORTANT]
 > 需要注意的是，當壓扁後的文字尺寸大於 `output_size` 時，圖像會進入自動縮放的流程。因此，你可能壓扁了圖像，卻又被縮放回來，結果什麼事情都沒發生。
 
-## 文字外框
+### 文字外框
 
 使用 `stroke_width` 參數可以調整文字外框的寬度。
 
@@ -414,7 +414,7 @@ text="文字外框測試"
 img = gen(text)
 ```
 
-![sample29](./docs/sample29.jpg)
+![sample29](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample29.jpg?raw=true)
 
 > [!WARNING]
 > 使用 `stroke_width` 會收到警告：
@@ -426,7 +426,7 @@ img = gen(text)
 >
 > 因為我們在測試中發現，在 `Pillow` 內使用 `stroke_width` 會不定期出現 `OSError` 的錯誤。這是 `Pillow` 的一個已知問題，我們把相關的 issue 連結放在了警告中，你可以點擊查看。
 
-## 多行文字
+### 多行文字
 
 使用 `\n` 換行符號可以實現多行文字。
 
@@ -439,7 +439,7 @@ text = '你好！\nHello, World!'
 img = gen(text)
 ```
 
-![sample30](./docs/sample30.jpg)
+![sample30](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample30.jpg?raw=true)
 
 在多行文字的情況中，可以和上述大部分的功能進行搭配，例如：
 
@@ -459,7 +459,7 @@ text = '你好！\nHello, World!'
 img = gen(text)
 ```
 
-![sample31](./docs/sample31.jpg)
+![sample31](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample31.jpg?raw=true)
 
 > [!WARNING]
 >
@@ -479,7 +479,7 @@ img = gen(text)
 >
 > 如果你需要這些功能，請不要使用多行文字。
 
-## 儀表板
+### 儀表板
 
 基礎功能大致上就是這樣。
 
@@ -496,7 +496,7 @@ print(gen)
 
 輸出後可以看到一個簡單的儀表板。
 
-![dashboard](./docs/dashboard.jpg)
+![dashboard](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/dashboard.jpg?raw=true)
 
 你可以看到：
 
@@ -543,7 +543,7 @@ gen.output_direction = OutputDirection.Horizontal
 
 還有許多功能沒有提到，但是基本功能已經介紹完畢。
 
-以上就是本專案的基本使用方法，更多詳細資訊和使用方法，請直接查閱 [**WordCanvas Documents**](https://docsaid.org/docs/wordcanvas/intro/)。
+以上就是本專案的基本使用方法，更多詳細資訊和使用方法，請直接查閱 [**WordCanvas Advanced Usage**](https://docsaid.org/docs/wordcanvas/advance/)。
 
 ## 引用
 

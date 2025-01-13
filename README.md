@@ -13,173 +13,226 @@
 ## Introduction
 
 <div align="center">
-    <img src="./docs/title.jpg" width="800">
+    <img src="https://github.com/DocsaidLab/WordCanvas/blob/main/docs/title.jpg?raw=true" width="800">
 </div>
 
-The core functionality of this project is the "Text Image Generation Tool".
+The core functionality of this project is a "**Text-to-Image Generation Tool**", named **WordCanvas**, meaning "text canvas."
 
-We addressed issues such as insufficient data volume, class imbalance, and lack of diversity by generating a large variety of synthetic Chinese text images. To achieve this, we referred to several existing text synthesis tools, which provided us with significant insights and inspired us to create a new text image generator from scratch.
+We generate a large variety of Chinese text images through data synthesis, addressing issues such as insufficient data, class imbalance, and lack of diversity. In doing so, we have referenced existing text synthesis tools, whose design ideas inspired us to build a completely new text image generator from scratch.
 
-## Documentation
+## Technical Documentation
 
-For information on how to install and use this package, please refer to the [**WordCanvas Documents**](https://docsaid.org/en/docs/wordcanvas). You can get all detailed information about this project from the documents.
+For installation and usage instructions, please refer to [**WordCanvas Documents**](https://docsaid.org/en/docs/wordcanvas).
+
+There you will find detailed information about the project.
 
 ## Installation
 
-Currently, there is no package available on PyPI, and there are no plans to provide one in the near future. To use this project, you must clone it directly from Github and then install the required dependencies.
+### Install via PyPI
 
-- Note: Before installation, please ensure you have installed `DocsaidKit`. If you have not installed `DocsaidKit`, please refer to the [**DocsaidKit Installation Guide**](https://docsaid.org/en/docs/docsaidkit/installation).
+1. Install `wordcanvas-docsaid`:
 
-### Installation Steps
+   ```bash
+   pip install wordcanvas-docsaid
+   ```
 
-1. **Clone the project:**
+2. Verify installation:
+
+   ```bash
+   python -c "import wordcanvas; print(wordcanvas.__version__)"
+   ```
+
+3. If you see the version number, the installation is successful.
+
+### Install from GitHub
+
+1. Clone the project from GitHub:
 
    ```bash
    git clone https://github.com/DocsaidLab/WordCanvas.git
    ```
 
-2. **Enter the project directory:**
+2. Install the wheel package:
+
+   ```bash
+   pip install wheel setuptools
+   ```
+
+3. Build the whl file:
 
    ```bash
    cd WordCanvas
-   ```
-
-3. **Install dependencies:**
-
-   ```bash
-   pip install wheel
-   ```
-
-4. **Build the package:**
-
-   ```bash
    python setup.py bdist_wheel
    ```
 
-5. **Install the package:**
+4. Install the whl file:
 
    ```bash
-   pip install dist/wordcanvas-*-py3-none-any.whl
+   pip install dist/wordcanvas_docsaid-*-py3-none-any.whl
    ```
 
-Following these steps, you should be able to successfully install `WordCanvas`.
+## Quick Start
 
-Once installed, you are ready to use the project.
+The hardest part is getting started, so we need a simple beginning.
 
-### Test the Installation
+### Start with a String
 
-You can test whether the installation was successful with the following command:
-
-```bash
-python -c "import wordcanvas; print(wordcanvas.__version__)"
-# >>> 0.4.2
-```
-
-If you see a version number similar to `0.4.2`, it indicates the installation was successful.
-
-## QuickStart
-
-Getting started is often the hardest part, so let's keep it simple.
-
-### Starting with a String
-
-Start with a basic declaration to begin using the tool.
+Simply provide a basic declaration and you're ready to go.
 
 ```python
 from wordcanvas import WordCanvas
 
-gen = WordCanvas()
+gen = WordCanvas(return_infos=True)
 ```
 
-Using default settings, you can directly call the function to generate a text image.
+Using all default settings, you can directly call the function to generate a text image.
 
 ```python
 text = "你好！Hello, World!"
 img, infos = gen(text)
+
 print(img.shape)
 # >>> (67, 579, 3)
+
+print(infos)
+# {'text': '你好！Hello, World!',
+#  'bbox(xyxy)': (0, 21, 579, 88),
+#  'bbox(wh)': (579, 67),
+#  'offset': (0, -21),
+#  'direction': 'ltr',
+#  'background_color': (0, 0, 0),
+#  'text_color': (255, 255, 255),
+#  'spacing': 4,
+#  'align': 'left',
+#  'stroke_width': 0,
+#  'stroke_fill': (0, 0, 0),
+#  'font_path': 'fonts/NotoSansTC-Regular.otf',
+#  'font_size_actual': 64,
+#  'font_name': 'NotoSansTC-Regular',
+#  'align_mode': <AlignMode.Left: 0>,
+#  'output_direction': <OutputDirection.Remain: 0>}
 ```
 
-![sample1](./docs/sample1.jpg)
+![sample1](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample1.jpg?raw=true)
 
-### Specifying a Specific Font
+> [!TIP]
+> In default mode, the output image size depends on:
+>
+> 1. **Font size**: The default is 64. As the font size increases, the image size will also increase.
+> 2. **Text length**: The longer the text, the wider the image will be, with the exact length determined by `pillow`.
+> 3. The output information `infos` contains all drawing parameters, including text, background color, text color, etc.
+> 4. To output only the image, set `return_infos=False`, which is the default setting.
+
+### Specify a Specific Font
 
 You can specify your preferred font using the `font` parameter.
 
 ```python
+from wordcanvas import WordCanvas
+
+# Do not specify return_infos, default is False, which will not return infos
 gen = WordCanvas(
     font_path="/path/to/your/font/OcrB-Regular.ttf"
 )
 
 text = 'Hello, World!'
-img, infos = gen(text)
+img = gen(text)
 ```
 
-![sample14](./docs/sample14.jpg)
+![sample14](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample14.jpg?raw=true)
 
-When the font does not support the input text, tofu characters will appear.
+If the font does not support the input text, tofu characters will appear.
 
 ```python
 text = 'Hello, 中文!'
-img, infos = gen(text)
+img = gen(text)
 ```
 
-![sample15](./docs/sample15.jpg)
+![sample15](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample15.jpg?raw=true)
 
-### Setting Image Size
+> [!TIP]
+>
+> **How to Check if the Font Supports Characters:**
+>
+> I currently don’t have this requirement, so I’ve left a basic method. This is a simple check that only checks one character at a time, so you need to iterate through all the characters. If you have other requirements, feel free to expand on this.
+>
+> ```python title="check_font.py"
+> from wordcanvas import is_character_supported, load_ttfont
+>
+> target_text = 'Hello, 中文!'
+>
+> font = load_ttfont("/path/to/your/font/OcrB-Regular.ttf")
+>
+> for c in target_text:
+>     status = is_character_supported(font, c)
+>
+> # >>> Character '中' (0x4e2d) is not supported by the font.
+> # >>> Character '文' (0x6587) is not supported by the font.
+> ```
 
-Use the `output_size` parameter to adjust the image size.
+### Set Image Size
+
+You can adjust the image size using the `output_size` parameter.
 
 ```python
+from wordcanvas import WordCanvas
+
 gen = WordCanvas(output_size=(64, 1024)) # Height 64, Width 1024
-img, infos = gen(text)
+img = gen(text)
 print(img.shape)
 # >>> (64, 1024, 3)
 ```
 
-![sample4](./docs/sample4.jpg)
+![sample4](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample4.jpg?raw=true)
 
-When the set size is smaller than the text image size, the text image will automatically be scaled down.
+When the specified size is smaller than the text image size, the text image will be automatically scaled.
 
-That is, the text will be squeezed together, forming a thin rectangle, like this:
+In other words, the text will be squeezed together, becoming a narrow rectangle, for example:
 
 ```python
+from wordcanvas import WordCanvas
+
 text = '你好' * 10
 gen = WordCanvas(output_size=(64, 512))  # Height 64, Width 512
-img, infos = gen(text)
+img = gen(text)
 ```
 
-![sample8](./docs/sample8.jpg)
+![sample8](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample8.jpg?raw=true)
 
-### Adjusting Background Color
+### Adjust Background Color
 
-Use the `background_color` parameter to adjust the background color.
+You can adjust the background color using the `background_color` parameter.
 
 ```python
+from wordcanvas import WordCanvas
+
 gen = WordCanvas(background_color=(255, 0, 0)) # Red background
-img, infos = gen(text)
+img = gen(text)
 ```
 
-![sample2](./docs/sample2.jpg)
+![sample2](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample2.jpg?raw=true)
 
-### Adjusting Text Color
+### Adjust Text Color
 
-Use the `text_color` parameter to adjust the text color.
+You can adjust the text color using the `text_color` parameter.
 
 ```python
+from wordcanvas import WordCanvas
+
 gen = WordCanvas(text_color=(0, 255, 0)) # Green text
-img, infos = gen(text)
+img = gen(text)
 ```
 
-![sample3](./docs/sample3.jpg)
+![sample3](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample3.jpg?raw=true)
 
-### Adjusting Text Alignment
+### Adjust Text Alignment
 
-:::warning
-Remember the image size we mentioned earlier? In default settings, **setting text alignment is meaningless**. You must allow extra space in the text image to see the effect of alignment.
-:::
+> [!WARNING]
+> Do you remember the image size mentioned earlier?
+>
+> By default, **setting text alignment does not have any effect**. When drawing the image, there must be extra space in the text image to see the alignment effect.
 
-Use the `align_mode` parameter to adjust the text alignment mode.
+You can adjust the text alignment using the `align_mode` parameter.
 
 ```python
 from wordcanvas import AlignMode, WordCanvas
@@ -190,66 +243,104 @@ gen = WordCanvas(
 )
 
 text = '你好！ Hello, World!'
-img, infos = gen(text)
+img = gen(text)
 ```
 
 - **Center alignment: `AlignMode.Center`**
 
-  ![sample5](./docs/sample5.jpg)
+  ![sample5](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample5.jpg?raw=true)
 
 - **Right alignment: `AlignMode.Right`**
 
-  ![sample6](./docs/sample6.jpg)
+  ![sample6](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample6.jpg?raw=true)
 
 - **Left alignment: `AlignMode.Left`**
 
-  ![sample7](./docs/sample4.jpg)
+  ![sample4](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample4.jpg?raw=true)
 
 - **Scatter alignment: `AlignMode.Scatter`**
 
-  ![sample8](./docs/sample7.jpg)
+  ![sample7](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample7.jpg?raw=true)
 
-### Adjusting Text Direction
+> [!TIP]
+>
+> In scatter alignment mode, not every character will be spread out, but words will be spread as a unit. In Chinese, the unit of a word is a character; in English, the unit of a word is a space.
+>
+> For example, the input text "你好！ Hello, World!" will be split into:
+>
+> - ["你", "好", "！", "Hello,", "World!"]
+>
+> Spaces are ignored, and scatter alignment is applied.
+>
+> Additionally, when the input text can only be split into a single word, scatter alignment for Chinese words is equivalent to center alignment, and English words will be split into individual characters for scatter alignment.
+>
+> The logic we use for this is:
+>
+> ```python
+> def split_text(text: str):
+>     """ Split text into a list of characters. """
+>     pattern = r"[a-zA-Z0-9\p{P}\p{S}]+|."
+>     matches = regex.findall(pattern, text)
+>     matches = [m for m in matches if not regex.match(r'\p{Z}', m)]
+>     if len(matches) == 1:
+>         matches = list(text)
+>     return matches
+> ```
 
-Use the `direction` parameter to adjust the text direction.
+> [!WARNING]
+> This is a very simple implementation and may not meet all requirements. If you have a more complete solution for string splitting, feel free to provide it.
 
-- **Outputting horizontal text**
+### Adjust Text Direction
+
+You can adjust the text direction using the `direction` parameter.
+
+- **Output horizontal text**
 
   ```python
+  from wordcanvas import AlignMode, WordCanvas
+
   text = '你好！'
   gen = WordCanvas(direction='ltr') # Left to right horizontal text
-  img, infos = gen(text)
+  img = gen(text)
   ```
 
-  ![sample9](./docs/sample9.jpg)
+  ![sample9](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample9.jpg?raw=true)
 
-- **Outputting vertical text**
+- **Output vertical text**
 
   ```python
+  from wordcanvas import AlignMode, WordCanvas
+
   text = '你好！'
   gen = WordCanvas(direction='ttb') # Top to bottom vertical text
-  img, infos = gen(text)
+  img = gen(text)
   ```
 
-  ![sample10](./docs/sample10.jpg)
+  ![sample10](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample10.jpg?raw=true)
 
-- **Outputting vertical text with scatter alignment**
+- **Output vertical text with scatter alignment**
 
   ```python
+  from wordcanvas import AlignMode, WordCanvas
+
   text = '你好！'
   gen = WordCanvas(
       direction='ttb',
       align_mode=AlignMode.Scatter,
       output_size=(64, 512)
   )
-  img, infos = gen(text)
+  img = gen(text)
   ```
 
-  ![sample11](./docs/sample11.jpg)
+  ![sample11](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample11.jpg?raw=true)
 
-### Adjusting Output Direction
+### Adjust Output Direction
 
-Use the `output_direction` parameter to adjust the output direction.
+You can adjust the output direction using the `output_direction` parameter.
+
+> [!TIP]
+>
+> **When to use this parameter**: When you choose "Output vertical text" but still want to view the text image horizontally, you can use this parameter.
 
 - **Vertical text, horizontal output**
 
@@ -262,10 +353,10 @@ Use the `output_direction` parameter to adjust the output direction.
   )
 
   text = '你好！'
-  img, infos = gen(text)
+  img = gen(text)
   ```
 
-  ![sample12](./docs/sample12.jpg)
+  ![sample12](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample12.jpg?raw=true)
 
 - **Horizontal text, vertical output**
 
@@ -278,51 +369,146 @@ Use the `output_direction` parameter to adjust the output direction.
   )
 
   text = '你好！'
-  img, infos = gen(text)
+  img = gen(text)
   ```
 
-  ![sample13](./docs/sample13.jpg)
+  ![sample13](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample13.jpg?raw=true)
 
-### Flattening Text
+### Squeeze Text
 
-In scenarios where the text is particularly flat, you can use the `text_aspect_ratio` parameter.
+In some scenarios, the text might need to be specially squeezed. You can use the `text_aspect_ratio` parameter to adjust this.
 
 ```python
+from wordcanvas import WordCanvas
+
 gen = WordCanvas(
     text_aspect_ratio=0.25, # Text height / text width = 1/4
     output_size=(32, 1024),
-)  # Flattened text
+)  # Squeezed text
 
-text = "Flattened test"
-img, infos = gen(text)
+text="壓扁測試"
+img = gen(text)
 ```
 
-![sample16](./docs/sample16.jpg)
+![sample16](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample16.jpg?raw=true)
+
+> [!IMPORTANT]
+> It is important to note that if the squeezed text size exceeds the `output_size`, the image will go through an automatic scaling process. Therefore, you might end up squeezing the text, but it will be scaled back to its original size, and nothing will appear to have happened.
+
+### Text Stroke
+
+You can adjust the width of the text stroke using the `stroke_width` parameter.
+
+```python
+from wordcanvas import WordCanvas
+
+gen = WordCanvas(
+    font_size=64,
+    text_color=(0, 0, 255), # Red text
+    background_color=(255, 0, 0), # Blue background
+    stroke_width=2, # Stroke width
+    stroke_fill=(0, 255, 0), # Green stroke
+)
+
+text="文字外框測試"
+img = gen(text)
+```
+
+![sample29](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample29.jpg?raw=true)
+
+> [!WARNING]
+> Using `stroke_width` may result in an OSError: array allocation size too large error with certain text.
+>
+> ```python
+> Using `stroke_width` may cause an OSError: array allocation size too large error with certain text.
+> This is a known issue with the `Pillow` library (see https://github.com/python-pillow/Pillow/issues/7287) and cannot be resolved directly.
+> ```
+>
+> We found in testing that using `stroke_width` in `Pillow` may intermittently result in an `OSError`. This is a known issue with `Pillow`, and we have linked the relevant issue in the warning. You can click the link to view it.
+
+### Multi-line Text
+
+You can use the `\n` newline character to create multi-line text.
+
+```python
+from wordcanvas import WordCanvas
+
+gen = WordCanvas()
+
+text = '你好！\nHello, World!'
+img = gen(text)
+```
+
+![sample30](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample30.jpg?raw=true)
+
+In the case of multi-line text, you can combine it with most of the features mentioned above, for example:
+
+```python
+from wordcanvas import WordCanvas, AlignMode
+
+gen = WordCanvas(
+  text_color=(0, 0, 255), # Red text
+  output_size=(128, 512), # Height 128, Width 512
+  background_color=(0, 0, 0), # Black background
+  align_mode=AlignMode.Center, # Center alignment
+  stroke_width=2, # Stroke width
+  stroke_fill=(0, 255, 0), # Green stroke
+)
+
+text = '你好！\nHello, World!'
+img = gen(text)
+```
+
+![sample31](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/sample31.jpg?raw=true)
+
+> [!WARNING]
+>
+> The following situations do not support multi-line text:
+>
+> 1. **`align_mode` does not support `AlignMode.Scatter`**
+>
+>    ```python
+>    gen = WordCanvas(align_mode=AlignMode.Scatter)
+>    ```
+>
+> 2. **`direction` does not support `ttb`**
+>
+>    ```python
+>     gen = WordCanvas(direction='ttb')
+>    ```
+>
+> If you need these features, please avoid using multi-line text.
 
 ### Dashboard
 
-That's a brief overview of the basic functionality.
+The basic functionality is more or less as described.
 
-Finally, let's take a look at the dashboard feature.
+Finally, let's introduce the dashboard feature.
 
 ```python
+from wordcanvas import WordCanvas
+
 gen = WordCanvas()
 print(gen)
 ```
 
-You can also skip `print` and just output directly, as we've implemented the `__repr__` method. The output will display a simple dashboard.
+You can also directly output without using `print`, as we have implemented the `__repr__` method.
 
-![dashboard](./docs/dashboard.jpg)
+Once output, you will see a simple dashboard.
 
-You can see:
+![dashboard](https://github.com/DocsaidLab/WordCanvas/blob/main/docs/dashboard.jpg?raw=true)
 
-- The first column is Property, which lists all the settings.
-- The second column is Current Value, which shows the value of the parameters "at this moment."
-- The third column is SetMethod, which describes the method to set the parameter. Parameters marked `set` can be directly modified; those marked `reinit` require reinitialization of the `WordCanvas` object.
-- The fourth column is DType, which is the data type of the parameter.
-- The fifth column is Description, which describes the parameter.
+Here you can see:
 
-Most parameters can be directly set, meaning when you need to change output characteristics, you don't need to rebuild a `WordCanvas` object, just set them directly. Parameters that require `reinit` typically involve font initialization, like `text_size`. So, be aware, not all parameters can be directly set.
+- The first column is **Property**, which lists all the setting parameters.
+- The second column is **Current Value**, showing the current value of the parameter.
+- The third column is **SetMethod**, which shows how the parameter is set.
+  - Parameters set with `set` can be directly modified;
+  - Parameters set with `reinit` require reinitialization of the `WordCanvas` object.
+- The fourth column is **DType**, which shows the data type of the parameter.
+- The fifth column is **Description**, which describes the parameter. (This column is not shown in the image above to save space.)
+
+Most parameters can be directly set, meaning that when you need to modify output characteristics, you don't need to create a new object. Just modify the settings directly. Parameters that require `reinit` usually involve the initialization of font formats, such as text height (`font_size`) and others.
 
 ```python
 gen.output_size = (64, 1024)
@@ -332,22 +518,32 @@ gen.direction = 'ltr'
 gen.output_direction = OutputDirection.Horizontal
 ```
 
-After setting, simply call to get the new text image.
-
-If you've set a parameter that requires `reinit`, you'll encounter an error:
+After setting, you can directly call the function to get the new text image. Additionally, if you modify parameters related to `reinit`, you will receive the corresponding error:
 
 - **AttributeError: can't set attribute**
 
   ```python
-  gen.text_size = 128
+  gen.font_size = 128
   # >>> AttributeError: can't set attribute
   ```
 
+> [!CAUTION]
+>
+> Of course, you can still forcefully modify the parameters, but as a fellow Python user, I can't stop you:
+>
+> ```python
+> gen._font_size = 128
+> ```
+>
+> However, this will cause errors when generating the image later!
+>
+> Don't insist; just reinitialize the object.
+
 ## Summary
 
-While many features weren't mentioned, this covers the basic functionalities.
+Many features haven't been mentioned, but the basic functionality has been covered.
 
-That concludes the basic usage of this project; if you need more advanced features, please refer to the [**WordCanvas Documents**](https://docsaid.org/en/docs/wordcanvas/intro).
+This concludes the basic usage of the project. For more detailed information and usage methods, please refer directly to [**WordCanvas Advanced Usage**](https://docsaid.org/en/docs/wordcanvas/advance/).
 
 ## Citation
 
