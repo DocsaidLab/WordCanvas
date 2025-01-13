@@ -16,9 +16,11 @@
     <img src="https://github.com/DocsaidLab/WordCanvas/blob/main/docs/title.jpg?raw=true" width="800">
 </div>
 
-The core functionality of this project is a "**Text-to-Image Generation Tool**", named **WordCanvas**, meaning "text canvas."
+---
 
-We generate a large variety of Chinese text images through data synthesis, addressing issues such as insufficient data, class imbalance, and lack of diversity. In doing so, we have referenced existing text synthesis tools, whose design ideas inspired us to build a completely new text image generator from scratch.
+This project is a text image rendering tool based on Pillow, designed specifically for random image generation.
+
+By adding a variety of parameter settings, users can flexibly adjust input text, font styles, colors, and other attributes to achieve large-scale random generation of text images. Whether addressing issues such as data scarcity, class imbalance, or enhancing image diversity, WordCanvas provides a simple and efficient solution, offering a solid data foundation for deep learning training.
 
 ## Technical Documentation
 
