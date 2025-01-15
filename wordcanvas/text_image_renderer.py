@@ -208,8 +208,8 @@ def text2image(
     """
 
     if direction not in ('ltr', 'rtl', 'ttb'):
-        raise ValueError(f"Invalid direction '{
-                         direction}'. Must be 'ltr', 'rtl', or 'ttb'.")
+        raise ValueError(
+            f"Invalid direction '{direction}'. Must be 'ltr', 'rtl', or 'ttb'.")
 
     if isinstance(font, tuple) and isinstance(font[0], ImageFont.FreeTypeFont):
         loaded_font, font_meta = font

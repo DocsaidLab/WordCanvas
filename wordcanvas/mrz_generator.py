@@ -73,15 +73,15 @@ class MRZGenerator:
                     raise ValueError(
                         'For TD1, mrz_text must contain exactly 3 lines with 30 characters each.')
                 if mrz_type in ['TD2', 'TD3'] and (len(lines) != 2 or any(len(line) != self.mrz_l[mrz_type] for line in lines)):
-                    raise ValueError(f'For {mrz_type}, mrz_text must contain exactly 2 lines with {
-                                     self.mrz_l[mrz_type]} characters each.')
+                    raise ValueError(
+                        f'For {mrz_type}, mrz_text must contain exactly 2 lines with {self.mrz_l[mrz_type]} characters each.')
             elif isinstance(mrz_text, list):
                 if mrz_type == 'TD1' and (len(mrz_text) != 3 or any(len(line) != 30 for line in mrz_text)):
                     raise ValueError(
                         'For TD1, mrz_text must be a list of 3 strings with 30 characters each.')
                 if mrz_type in ['TD2', 'TD3'] and (len(mrz_text) != 2 or any(len(line) != self.mrz_l[mrz_type] for line in mrz_text)):
-                    raise ValueError(f'For {mrz_type}, mrz_text must be a list of 2 strings with {
-                                     self.mrz_l[mrz_type]} characters each.')
+                    raise ValueError(
+                        f'For {mrz_type}, mrz_text must be a list of 2 strings with {self.mrz_l[mrz_type]} characters each.')
                 mrz_text = '\n'.join(mrz_text)
             else:
                 raise ValueError(

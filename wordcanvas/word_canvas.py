@@ -57,15 +57,13 @@ class WordCanvas:
         for block_font in block_font_list:
             if block_font in Path(font_path).stem:
                 raise ValueError(
-                    f"\nFont: {cb.colorstr(
-                        Path(font_path).stem, 'RED')} is in the block list.\n"
+                    f"\nFont: {cb.colorstr(Path(font_path).stem, 'RED')} is in the block list.\n"
                     f"\tIt means that the font has some problems and cannot be used.\n"
                 )
 
         if stroke_width > 0:
             print(
-                f"\n\tUsing `stroke_width` may cause an {cb.colorstr(
-                    'OSError: array allocation size too large', 'red')} error with certain text.\n"
+                f"\n\tUsing `stroke_width` may cause an {cb.colorstr('OSError: array allocation size too large', 'red')} error with certain text.\n"
                 f"\tThis is a known issue with the `Pillow` library (see https://github.com/python-pillow/Pillow/issues/7287) and cannot be resolved directly.\n"
             )
 
@@ -447,8 +445,7 @@ class RandomWordCanvas(WordCanvas):
 
         if random_stroke_width:
             print(
-                f"\n\tUsing `random_stroke_width` may cause an {cb.colorstr(
-                    'OSError: array allocation size too large', 'red')} error with certain text.\n"
+                f"\n\tUsing `random_stroke_width` may cause an {cb.colorstr('OSError: array allocation size too large', 'red')} error with certain text.\n"
                 f"\tThis is a known issue with the `Pillow` library (see https://github.com/python-pillow/Pillow/issues/7287) and cannot be resolved directly.\n"
             )
 
@@ -491,8 +488,7 @@ class RandomWordCanvas(WordCanvas):
                 for block_font in block_font_list:
                     if block_font in font.stem:
                         print(
-                            f"\rFont: {cb.colorstr(
-                                font.stem, 'RED')} is in the block list.\n"
+                            f"\rFont: {cb.colorstr(font.stem, 'RED')} is in the block list.\n"
                             f"\tIt means that the font has some problems and cannot be used.\n"
                         )
                         is_block_font = True
