@@ -9,4 +9,4 @@ from .text_image_renderer import load_truetype_font, text2image
 from .word_canvas import (AlignMode, OutputDirection, RandomWordCanvas,
                           WordCanvas)
 
-__version__ = '2.0.2'
+__version__ = '2.1.0'
