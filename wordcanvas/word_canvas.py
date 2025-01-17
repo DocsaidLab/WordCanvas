@@ -432,12 +432,15 @@ class RandomWordCanvas(WordCanvas):
         random_spacing: bool = False,
         random_stroke_width: bool = False,
         random_stroke_fill: bool = False,
+        random_lines: bool = False,
         min_random_text_length: int = 1,
         max_random_text_length: int = 9,
         min_random_stroke_width: int = 0,
         max_random_stroke_width: int = 5,
         min_random_spacing: int = 0,
         max_random_spacing: int = 5,
+        min_random_lines: int = 1,
+        max_random_lines: int = 2,
         return_infos: bool = False,
         **kwargs
     ):
@@ -466,12 +469,15 @@ class RandomWordCanvas(WordCanvas):
         self.random_spacing = random_spacing
         self.random_stroke_width = random_stroke_width
         self.random_stroke_fill = random_stroke_fill
+        self.random_lines = random_lines
         self.min_random_text_length = min_random_text_length
         self.max_random_text_length = max_random_text_length
         self.min_random_stroke_width = min_random_stroke_width
         self.max_random_stroke_width = max_random_stroke_width
         self.min_random_spacing = min_random_spacing
         self.max_random_spacing = max_random_spacing
+        self.min_random_lines = min_random_lines
+        self.max_random_lines = max_random_lines
         self.random_font_weight = random_font_weight
 
         # Using random fonts with bank
@@ -566,6 +572,10 @@ class RandomWordCanvas(WordCanvas):
                 "Random minimum spacing."],
             ["max_random_spacing", self.max_random_spacing, "set", "int",
                 "Random maximum spacing."],
+            ["min_random_lines", self.min_random_lines, "set", "int",
+                "Random minimum lines."],
+            ["max_random_lines", self.max_random_lines, "set", "int",
+                "Random maximum lines."],
             ["random_font", self.colorize(
                 self.random_font), "set", "bool", "Randomize font."],
             ["random_text", self.colorize(
@@ -586,6 +596,8 @@ class RandomWordCanvas(WordCanvas):
                 self.random_stroke_width), "set", "bool", "Randomize stroke width."],
             ["random_stroke_fill", self.colorize(
                 self.random_stroke_fill), "set", "bool", "Randomize stroke fill."],
+            ["random_lines", self.colorize(
+                self.random_lines), "set", "bool", "Randomize lines."],
         ]
 
         for row in data:
@@ -613,6 +625,15 @@ class RandomWordCanvas(WordCanvas):
             text_length = np.random.randint(
                 self.min_random_text_length, self.max_random_text_length + 1)
             text = ''.join(np.random.choice(candidates, text_length))
+
+            if self.random_lines:
+                lines = np.random.randint(
+                    self.min_random_lines, self.max_random_lines + 1)
+                num_change = lines - 1
+                if num_change > 0 and len(text) > num_change:
+                    for _ in range(num_change):
+                        idx = np.random.randint(1, len(text))
+                        text = text[:idx] + '\n' + text[idx:]
 
         # Overwrite text color with random color
         text_color = np.random.randint(0, 255, 3) \
